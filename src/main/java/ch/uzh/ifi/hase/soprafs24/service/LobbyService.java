@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.LobbyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +52,45 @@ public class LobbyService {
         return newLobby;
     }
 
+    public Lobby addUser(Long lobbyId, User newUser) {
+        checkIfLobbyFull(lobbyId);
+        Lobby updatedlobby = getLobbyById(lobbyId);
+
+         // Retrieve the current list of users
+        List<User> currentUsers = updatedlobby.getUsers();
+    
+        // Add the new user to the list
+        currentUsers.add(newUser);
+    
+        // Set the updated list of users back to the lobby
+        updatedlobby.setUsers(currentUsers);
+
+        // Save the updated lobby
+        lobbyRepository.save(updatedlobby);
+        lobbyRepository.flush();
+        log.debug("Added user to Lobby: {}", updatedlobby.getId());
+    
+        return updatedlobby;
+    }
+
+    //check if lobby with id is full (max. 6 users)
+    private void checkIfLobbyFull(Long lobbyId){
+        Optional<Lobby> optionalLobby = lobbyRepository.findById(lobbyId);
+        Lobby lobby = optionalLobby.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found"));
+    
+        List<User> users = lobby.getUsers();
+        int numberOfUsers = users.size();
+    
+        if (numberOfUsers >= 6) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lobby is full");
+        }
+    }
+
     //check if lobby with id already exists
     private void checkIfLobbyExists(Long lobbyId) {
         Optional<Lobby> lobby = lobbyRepository.findById(lobbyId);
         if (lobby.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Lobby with id does not exist");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Lobby with id already exists");
         }
 
     }
