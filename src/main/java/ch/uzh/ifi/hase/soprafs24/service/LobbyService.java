@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.repository.LobbyRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class LobbyService {
+
+
     private final Logger log = LoggerFactory.getLogger(LobbyService.class);
 
     private final LobbyRepository lobbyRepository;
@@ -43,8 +42,9 @@ public class LobbyService {
     }
 
     public Lobby createLobby() {
-        //checkIfLobbyExists(newLobby.getId());
+
         Lobby newLobby = new Lobby();
+        checkIfLobbyExists(newLobby.getId());
         lobbyRepository.save(newLobby);
         lobbyRepository.flush();
         log.debug("Created Information for Lobby: {}", newLobby.getId());
