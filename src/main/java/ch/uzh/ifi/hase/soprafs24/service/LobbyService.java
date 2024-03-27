@@ -55,6 +55,8 @@ public class LobbyService {
     public Lobby addUser(Long lobbyId, User newUser) {
         checkIfLobbyFull(lobbyId);
         Lobby updatedlobby = getLobbyById(lobbyId);
+        //TODO
+        //if updatedlobby == null raise error!!
 
          // Retrieve the current list of users
         List<User> currentUsers = updatedlobby.getUsers();

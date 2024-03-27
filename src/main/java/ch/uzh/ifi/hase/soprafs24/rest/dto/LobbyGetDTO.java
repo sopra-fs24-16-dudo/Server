@@ -4,7 +4,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 public class LobbyGetDTO {
 
     private Long id;
-
     private User[] users;
 
     //setter and getter
