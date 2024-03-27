@@ -96,4 +96,10 @@ public class LobbyService {
         }
 
     }
+
+    public List<User> getUsersInLobby(Long lobbyId) {
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        return lobby.getUsers();
+    }
 }

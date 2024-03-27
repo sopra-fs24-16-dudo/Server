@@ -9,6 +9,7 @@ import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import java.util.List;
 
 @RestController
 public class LobbyController {
@@ -43,5 +44,12 @@ public class LobbyController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build(); 
+    }
+
+    @GetMapping("/lobby/user/{lobbyId}") // Corrected the path variable syntax
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<User> getUsersInLobby(@PathVariable Long lobbyId) {
+        return lobbyService.getUsersInLobby(lobbyId);
     }
 }
