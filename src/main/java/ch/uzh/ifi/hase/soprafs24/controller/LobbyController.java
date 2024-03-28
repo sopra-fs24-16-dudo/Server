@@ -25,9 +25,10 @@ public class LobbyController {
     @PostMapping("/lobbies")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public LobbyGetDTO createLobby() {
+    public LobbyGetDTO createLobby(@RequestBody Long newUser) {
+        User userToAdd = userService.getUserById(newUser);
         // convert API lobby to internal representation
-        Lobby createdLobby = lobbyService.createLobby();
+        Lobby createdLobby = lobbyService.createLobby(userToAdd);
         // create lobby
         // convert internal representation of lobby back to API
         return DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby);
@@ -51,5 +52,18 @@ public class LobbyController {
     @ResponseBody
     public List<User> getUsersInLobby(@PathVariable Long lobbyId) {
         return lobbyService.getUsersInLobby(lobbyId);
+    }
+
+    @PostMapping("/lobby/exit/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> exitLobby(@PathVariable Long lobbyId, @RequestBody Long exitUser) {
+        User userToRemove = userService.getUserById(exitUser);
+        Lobby updatedLobby = lobbyService.removeUser(lobbyId, userToRemove);
+
+        if (updatedLobby == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build(); 
     }
 }
