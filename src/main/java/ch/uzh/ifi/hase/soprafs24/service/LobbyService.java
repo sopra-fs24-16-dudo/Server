@@ -24,9 +24,12 @@ public class LobbyService {
 
     private final LobbyRepository lobbyRepository;
 
+    private UserService userService;
+
     @Autowired
-    public LobbyService(@Qualifier("lobbyRepository") LobbyRepository lobbyRepository) {
+    public LobbyService(@Qualifier("lobbyRepository") LobbyRepository lobbyRepository, UserService userService) {
         this.lobbyRepository = lobbyRepository;
+        this.userService = userService;
     }
 
     public Lobby getLobbyById(Long lobbyId) {
@@ -84,7 +87,7 @@ public class LobbyService {
         lobbyRepository.save(updatedlobby);
         lobbyRepository.flush();
         log.debug("Added user to Lobby: {}", updatedlobby.getId());
-    
+
         return updatedlobby;
     }
 
@@ -92,10 +95,10 @@ public class LobbyService {
     private void checkIfLobbyFull(Long lobbyId){
         Optional<Lobby> optionalLobby = lobbyRepository.findById(lobbyId);
         Lobby lobby = optionalLobby.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found"));
-    
+
         List<User> users = lobby.getUsers();
         int numberOfUsers = users.size();
-    
+
         if (numberOfUsers >= 6) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lobby is full");
         }
@@ -117,7 +120,7 @@ public class LobbyService {
     }
 
     private User checkIfUserInLobby(Long lobbyId, User user) {
-        
+
         Lobby lobby = getLobbyById(lobbyId);
         List<User> currentUsers = lobby.getUsers();
 
@@ -130,32 +133,90 @@ public class LobbyService {
 
     public Lobby removeUser(Long lobbyId, User userToRemove) {
         Lobby lobby = getLobbyById(lobbyId);
-    
+
         // Check if the lobby exists
         if (lobby == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId);
         }
-    
+
         // Retrieve the current list of users in the lobby
         List<User> currentUsers = lobby.getUsers();
-        
+
         // Check if the user to remove is in the lobby
         if (!currentUsers.contains(userToRemove)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not in the lobby");
         }
-        
+
         // Remove the user from the list of users
         currentUsers.remove(userToRemove);
-        
+
         // Set the updated list of users back to the lobby
         lobby.setUsers(currentUsers);
-        
-        // Save the updated lobby to the repository
-        lobbyRepository.save(lobby);
-        lobbyRepository.flush();
-        
-        log.debug("Removed user from Lobby: {}", lobby.getId());
-        
+
+        if (currentUsers.isEmpty()) {
+            deleteLobby(lobbyId);
+        } else {
+            // Save the updated lobby to the repository
+            lobby = lobbyRepository.save(lobby);
+            log.debug("Removed user from Lobby: {}", lobby.getId());
+        }
         return lobby;
     }
+
+    private void deleteLobby(Long lobbyId) {
+        // Retrieve the lobby by ID
+        Lobby lobby = getLobbyById(lobbyId);
+
+        // Check if the lobby exists
+        if (lobby == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId);
+        }
+
+        // Delete the lobby
+        lobbyRepository.delete(lobby);
+
+        log.debug("Deleted lobby: {}", lobbyId);
+    }
+    public void updateUserReadyStatus(Long lobbyId, User userReady) {
+        // Find lobby by ID
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+
+        Optional<User> optionalUser = lobby.getUsers().stream()
+                .filter(u -> u.getId().equals(userReady.getId()))
+                .findFirst();
+        if (optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in lobby");
+        }
+        // Update user's readiness status
+        userReady.setReady(true);
+        lobbyRepository.save(lobby);
+
+        }
+    public boolean areAllUsersReady(Long lobbyId) {
+
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        // Get all users in the lobby
+        List<User> usersInLobby = getUsersInLobby(lobbyId);
+
+        // Check if all users in the lobby are ready
+        return usersInLobby.stream().allMatch(User::isReady); // Assuming there's a method isReady() in the User entity
+    }
+    public void resetAllUsersReadyStatus(Long lobbyId) {
+        // Retrieve the lobby by ID
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+
+        // Reset readiness status of all users in the lobby to false
+        List<User> users = lobby.getUsers();
+        for (User user : users) {
+            user.setReady(false);
+        }
+
+        // Save the updated lobby
+        lobbyRepository.save(lobby);
+    }
+
+
 }

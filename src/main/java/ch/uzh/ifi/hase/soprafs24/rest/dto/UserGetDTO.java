@@ -10,6 +10,7 @@ public class UserGetDTO {
   private UserStatus status;
   private LocalDate creationDate;
   private LocalDate birthday;
+  private boolean ready;
 
   public Long getId() {
     return id;
@@ -58,5 +59,8 @@ public class UserGetDTO {
   public void setBirthday(LocalDate birthday) {
     this.birthday = birthday;
   }
+
+  public boolean isReady() { return ready; }
+  public void setReady(boolean ready) { this.ready = ready; }
 
 }
