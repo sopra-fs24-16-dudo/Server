@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
+import org.springframework.boot.availability.ReadinessState;
 
 import java.time.LocalDate;
 import javax.persistence.*;
@@ -43,6 +44,8 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private UserStatus status;
+  @Column(nullable = false)
+  private boolean ready;
 
   public Long getId() {
     return id;
@@ -99,4 +102,6 @@ public class User implements Serializable {
   public void setStatus(UserStatus status) {
     this.status = status;
   }
+  public boolean isReady() { return ready; }
+  public void setReady(boolean ready) { this.ready = ready; }
 }
