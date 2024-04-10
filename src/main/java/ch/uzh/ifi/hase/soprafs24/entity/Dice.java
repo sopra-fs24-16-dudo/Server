@@ -1,4 +1,4 @@
-package ch.uzh.ifi.seal.soprafs24.dudo;
+package ch.uzh.ifi.seal.soprafs24.entity;
 
 import java.util.*;
 
