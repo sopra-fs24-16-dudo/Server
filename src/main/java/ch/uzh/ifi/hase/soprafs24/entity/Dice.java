@@ -31,15 +31,6 @@ public class Dice {
         return diceMapping.get(diceValue);
     }
 
-    // Get the total value of all dice
-    public int getTotalDiceValue() {
-        int total = 0;
-        for (String value : diceValues) {
-            total += Integer.parseInt(value);
-        }
-        return total;
-    }
-
     // Get the number of dice
     public int getNumberOfDice() {
         return numberOfDice;
