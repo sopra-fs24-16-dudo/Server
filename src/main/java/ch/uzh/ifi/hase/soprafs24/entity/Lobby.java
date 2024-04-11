@@ -19,8 +19,8 @@ public class Lobby implements Serializable{
     @OneToMany
     private List<User> users;
 
-    @Column
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)//previously received Caused by: org.hibernate.AnnotationException: @Column(s) not allowed on a @OneToOne property: ch.uzh.ifi.hase.soprafs24.entity.Lobby.chat
+    @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat;
 
     public List<User> getUsers() {
