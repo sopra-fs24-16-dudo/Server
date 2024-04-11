@@ -19,6 +19,9 @@ public class Lobby implements Serializable{
     @OneToMany
     private List<User> users;
 
+    @Column
+    @OneToOne
+    private Chat chat;
 
     public List<User> getUsers() {
         return users;
@@ -28,6 +31,10 @@ public class Lobby implements Serializable{
         this.users = users;
     }
 
+
+    public Chat getChat() {
+        return chat;
+    }
     public long getId() {
         return id;
     }
