@@ -20,6 +20,21 @@ import java.util.ArrayList;
 @Transactional
 public class LobbyService {
 
+    private static final List<String> RULES = List.of(
+        "Rule 1: Your Resources - You start with 5 dice and 2 chips.",
+        "Rule 2: Rolling the Dice - Every round begins with all players rolling their dice simultaneously.",
+        "Rule 3: Starting Player - The starting player is chosen randomly.",
+        "Rule 4: Your Turn - You have the chance to make the first bid.",
+        "Rule 5: Making a Bid - When it's your turn, announce the minimum number of dice showing a certain suit (e.g., 'five queens').",
+        "Rule 6: Raising the Stakes - You can raise the bid by increasing the quantity of dice, the die number, or both.",
+        "Rule 7: Wild Aces - Aces act as wild cards, except when you're in a 'Fijo' state.",
+        "Rule 8: Bidding with Aces - If you wish to bid aces, halve the quantity of dice, round down, and add one.",
+        "Rule 9: Challenging a Bid - If you don't believe the previous bid is correct, call 'dudo' to challenge it.",
+        "Rule 10: Consequences - If your challenge fails, you lose a die; if it succeeds, you lose a chip.",
+        "Rule 11: Fijo Round - When you reach zero chips, a 'Fijo' round begins, where aces are not wild.",
+        "Rule 12: Elimination - Lose a round with zero chips, and you're out of the game.",
+        "Rule 13: Victory - Be the last player standing to win the game: If you have two chips left, earn two points; if you have one or no chips left, earn one point."
+    );
 
     private final Logger log = LoggerFactory.getLogger(LobbyService.class);
 
@@ -231,5 +246,8 @@ public class LobbyService {
         return lobby.getChat().getMessages();
     }
 
+    public List<String> getRules() {
+        return RULES;
+    }
 
 }

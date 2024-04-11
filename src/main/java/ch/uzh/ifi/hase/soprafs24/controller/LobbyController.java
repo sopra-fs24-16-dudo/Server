@@ -122,5 +122,10 @@ public class LobbyController {
         return lobbyService.getMessages(lobbyId);
     }
 
-
+    @GetMapping("/rules") // Corrected the path variable syntax
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<String> getRules() {
+        return lobbyService.getRules();
+    }
 }
