@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 import javax.persistence.*;
-import java.util.List;
+import java.util.ArrayList;
 
 
 @Entity
@@ -11,12 +11,11 @@ public class Chat {
     @Id
     private Long id;
 
-
     @ElementCollection
-    private List<String> messages;
+    private ArrayList<String> messages;
 
 
-    public List<String> getMessages() {
+    public ArrayList<String> getMessages() {
         return messages;
     }
 

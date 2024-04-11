@@ -226,7 +226,7 @@ public class LobbyService {
         lobby.getChat().addMessage(message);
     }
 
-    public List<String> getMessages(long lobbyId) {
+    public ArrayList<String> getMessages(long lobbyId) {
         Lobby lobby = lobbyRepository.findById(lobbyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
         return lobby.getChat().getMessages();

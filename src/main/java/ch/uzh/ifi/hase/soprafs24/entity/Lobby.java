@@ -19,7 +19,7 @@ public class Lobby implements Serializable{
     @OneToMany
     private List<User> users;
 
-
+    @Column
     @OneToOne
     private Chat chat;
 
