@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Chat;
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.LobbyRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import ch.uzh.ifi.hase.soprafs24.entity.Chat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -216,6 +218,18 @@ public class LobbyService {
 
         // Save the updated lobby
         lobbyRepository.save(lobby);
+    }
+
+    public void postMessage(long lobbyId, String message) {
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        lobby.getChat().addMessage(message);
+    }
+
+    public ArrayList<String> getMessages(long lobbyId) {
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        return lobby.getChat().getMessages();
     }
 
 
