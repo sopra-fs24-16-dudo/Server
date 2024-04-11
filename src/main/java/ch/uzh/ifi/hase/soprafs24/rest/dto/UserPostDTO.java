@@ -5,7 +5,6 @@ public class UserPostDTO {
   private String name;
 
   private String username;
-  private boolean ready;
 
   public String getName() {
     return name;
@@ -22,6 +21,4 @@ public class UserPostDTO {
   public void setUsername(String username) {
     this.username = username;
   }
-  public boolean isReady() { return ready; }
-  public void setReady(boolean ready) { this.ready = ready; }
 }
