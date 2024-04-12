@@ -30,7 +30,7 @@ public class LobbyService {
         "Rule 7: Wild Aces - Aces act as wild cards, except when you're in a 'Fijo' state.",
         "Rule 8: Bidding with Aces - If you wish to bid aces, halve the quantity of dice, round down, and add one.",
         "Rule 9: Challenging a Bid - If you don't believe the previous bid is correct, call 'dudo' to challenge it.",
-        "Rule 10: Consequences - If your challenge fails, you lose a die; if it succeeds, you lose a chip.",
+        "Rule 10: Consequences - If your challenge fails, you lose a chip; if it succeeds, your opponent loses a chip.",
         "Rule 11: Fijo Round - When you reach zero chips, a 'Fijo' round begins, where aces are not wild.",
         "Rule 12: Elimination - Lose a round with zero chips, and you're out of the game.",
         "Rule 13: Victory - Be the last player standing to win the game: If you have two chips left, earn two points; if you have one or no chips left, earn one point."
