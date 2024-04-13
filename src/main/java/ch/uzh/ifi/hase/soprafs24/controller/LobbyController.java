@@ -107,15 +107,16 @@ public class LobbyController {
         lobbyService.resetAllUsersReadyStatus(lobbyId);
     }
 
-    @PostMapping("/lobby/{lobbyId}/chat")
+    @PostMapping("/lobby/chat/{lobbyId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void postMessage(@PathVariable Long lobbyId, @RequestBody User user, String message) {
-        message = user.getUsername() + ": " + message;
-        lobbyService.postMessage(lobbyId, message);
+    public void postMessage(@PathVariable Long lobbyId,@PathVariable Long userId, @RequestBody String message) {
+        User user = userService.getUserById(userId);
+        String MyMessage = user.getUsername() + ": " + message;
+        lobbyService.postMessage(lobbyId, MyMessage);
     }
 
-    @GetMapping("/lobby/{lobbyId}/chat")
+    @GetMapping("/lobby/chat/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<String> getChatMessages(@PathVariable Long lobbyId) {
