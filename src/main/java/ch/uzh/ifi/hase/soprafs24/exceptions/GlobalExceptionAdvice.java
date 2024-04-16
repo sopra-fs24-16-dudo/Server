@@ -40,4 +40,5 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     log.error("Default Exception Handler -> caught:", ex);
     return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
   }
+
 }

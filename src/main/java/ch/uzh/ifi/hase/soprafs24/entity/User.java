@@ -46,6 +46,9 @@ public class User implements Serializable {
   private UserStatus status;
   @Column(nullable = false)
   private boolean ready;
+  @ManyToOne
+  @JoinColumn(name = "voice_channel_id")
+  private VoiceChannel voiceChannel;
 
   public Long getId() {
     return id;
@@ -78,7 +81,7 @@ public class User implements Serializable {
   public void setCreationDate(LocalDate creationDate) {
     this.creationDate = creationDate;
   }
-  
+
   public LocalDate getBirthday() {
     return birthday;
   }
@@ -104,4 +107,7 @@ public class User implements Serializable {
   }
   public boolean isReady() { return ready; }
   public void setReady(boolean ready) { this.ready = ready; }
+  public VoiceChannel getVoiceChannel() { return voiceChannel; }
+
+  public void setVoiceChannel(VoiceChannel voiceChannel) { this.voiceChannel = voiceChannel; }
 }

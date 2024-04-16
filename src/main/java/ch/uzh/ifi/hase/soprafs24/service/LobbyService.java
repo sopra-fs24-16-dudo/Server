@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.entity.Chat;
+import ch.uzh.ifi.hase.soprafs24.entity.VoiceChannel;
 import ch.uzh.ifi.hase.soprafs24.repository.LobbyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +42,13 @@ public class LobbyService {
     private final LobbyRepository lobbyRepository;
 
     private UserService userService;
+    private VoiceChannelService voiceChannelService;
 
     @Autowired
-    public LobbyService(@Qualifier("lobbyRepository") LobbyRepository lobbyRepository, UserService userService) {
+    public LobbyService(@Qualifier("lobbyRepository") LobbyRepository lobbyRepository, UserService userService, VoiceChannelService voiceChannelService) {
         this.lobbyRepository = lobbyRepository;
         this.userService = userService;
+        this.voiceChannelService = voiceChannelService;
     }
 
     public Lobby getLobbyById(Long lobbyId) {
@@ -66,6 +69,10 @@ public class LobbyService {
 
         Lobby newLobby = new Lobby();
         checkIfLobbyExists(newLobby.getId());
+
+        VoiceChannel voiceChannel = voiceChannelService.createVoiceChannel(newLobby);
+        // Associate the voice channel with the lobby
+        newLobby.setVoiceChannel(voiceChannel);
 
         // Initialize currentUsers as an empty list
         List<User> currentUsers = new ArrayList<>();
