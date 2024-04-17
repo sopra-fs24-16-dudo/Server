@@ -13,7 +13,7 @@ public class Game implements Serializable {
     private Long id;  // Using the lobby ID as the game ID
 
     @OneToMany
-    @JoinColumn(name = "game_id") // Adjust column name as needed
+    @JoinColumn(name = "game_id")
     private List<User> users;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -78,6 +78,4 @@ public class Game implements Serializable {
     public void setEnded(boolean ended) {
         this.ended = ended;
     }
-
-    // Add getters and setters for other fields
 }
