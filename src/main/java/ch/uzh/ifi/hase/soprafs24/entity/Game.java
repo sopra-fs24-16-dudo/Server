@@ -13,7 +13,7 @@ public class Game implements Serializable {
     private Chat chat = new Chat();
     private Player winner;
     private Player startingPlayer;
-    
+
     private Player playRound (List<Player> players, Player startingPlayer){
         //returns the loser of the round
         return null;
@@ -38,11 +38,22 @@ public class Game implements Serializable {
         }
     }
 
+    private void startGame(){
+        //set starting player
+        setStartingPlayer(players.get(0));
+        while (!checkWinner()) {
+            Player loser = playRound(players, startingPlayer);
+            subtractChips(loser);
+            setStartingPlayer(loser);
+        }
+    }
+
     private void subtractChips(Player loser){
         loser.subtractChip();
     }
 
     private void setStartingPlayer(Player player){
+        //TODO if a player is disqualified, the next player should start
         startingPlayer = player;
     }
 
