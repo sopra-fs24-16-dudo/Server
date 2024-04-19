@@ -8,9 +8,7 @@ public class Player {
     private long id;
     private String username;
 
-    public Player(long id, String username) {
-        this.id = id;
-        this.username = username;
+    public Player() {
         this.hand = new Hand();
         chips = 3;
     }
@@ -45,5 +43,13 @@ public class Player {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

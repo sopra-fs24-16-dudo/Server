@@ -2,14 +2,15 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 import javax.persistence.*;
-
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "LOBBY")
 public class Lobby implements Serializable{
     private static final long serialVersionUID = 1L;
-
 
     @Id
     @GeneratedValue
@@ -26,6 +27,53 @@ public class Lobby implements Serializable{
     @OneToOne(cascade = CascadeType.ALL)//previously received Caused by: org.hibernate.AnnotationException: @Column(s) not allowed on a @OneToOne property: ch.uzh.ifi.hase.soprafs24.entity.Lobby.chat
     @JoinColumn(name = "chat_id", referencedColumnName = "id")
     private Chat chat = new Chat();
+
+    @Transient
+    private Leaderboard leaderboard;
+
+    @Transient
+    public List<Player> players;
+
+    public Lobby() {
+        this.leaderboard = createLeaderboard();
+    }
+
+    public Leaderboard createLeaderboard() {
+        Leaderboard leaderboard = new Leaderboard();
+        Map<User, Long> userPoints = new HashMap<>();
+    
+        if (users != null) {
+            for (User user : users) {
+                // Hier setzen wir die Punkte des Benutzers auf 0.
+                userPoints.put(user, 0L);
+        }    
+    }
+    
+        leaderboard.setUserPoints(userPoints);
+        return leaderboard;
+    }
+
+    public void startGame() {
+        players = convertUsersToPlayers(users);
+        Game game = new Game(players);
+        game.startGame();
+    }
+
+    private List<Player> convertUsersToPlayers(List<User> users) {
+        for (User user : users) {
+            Player player = new Player();
+            player.setUsername(user.getUsername());
+            player.setId(user.getId());
+            // Setzen Sie hier andere Attribute des Players, falls erforderlich.
+            players.add(player);
+        }
+        return players;
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+        leaderboard.addUser(user);
+    }
 
     public List<User> getUsers() {
         return users;

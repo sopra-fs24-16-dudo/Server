@@ -3,16 +3,20 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 
 
 public class Game implements Serializable {
     private static final long serialVersionUID = 1L;
 
-
     private List<Player> players;
     private Chat chat = new Chat();
     private Player winner;
     private Player startingPlayer;
+
+    public Game(List<Player> players) {
+        this.players = players;
+    }
 
     private Player playRound (List<Player> players, Player startingPlayer){
         //returns the loser of the round
@@ -38,7 +42,7 @@ public class Game implements Serializable {
         }
     }
 
-    private void startGame(){
+    public void startGame(){
         //set starting player
         setStartingPlayer(players.get(0));
         while (!checkWinner()) {
@@ -59,6 +63,10 @@ public class Game implements Serializable {
 
     public Player getStartingPlayer(){
         return startingPlayer;
+    }
+
+    public Player getWinner(){
+        return winner;
     }
 
     public List<Player> getUsers() {

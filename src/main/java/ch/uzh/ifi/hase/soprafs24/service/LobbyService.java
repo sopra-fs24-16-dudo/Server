@@ -99,13 +99,8 @@ public class LobbyService {
 
         checkIfLobbyFull(lobbyId);
 
-         // Retrieve the current list of users
-        List<User> currentUsers = updatedlobby.getUsers();
-        // Add the new user to the list
-        currentUsers.add(newUser);
-        // Set the updated list of users back to the lobby
-        updatedlobby.setUsers(currentUsers);
-
+        updatedlobby.addUser(newUser);
+       
         // Save the updated lobby
         lobbyRepository.save(updatedlobby);
         lobbyRepository.flush();
