@@ -4,47 +4,58 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-@Entity
-@Table(name = "GAME")
+
 public class Game implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private Long id;  // Using the lobby ID as the game ID
 
-    @OneToMany
-    @JoinColumn(name = "game_id")
-    private List<User> users;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "chat_id", referencedColumnName = "id")
+    private List<Player> players;
     private Chat chat = new Chat();
-
-    @OneToOne
-    @JoinColumn(name = "lobby_id", referencedColumnName = "id")
-    private Lobby lobby;
-
-    private boolean started;
-    private boolean ended;
-
-    // Add more fields as needed for your game
-
-    // Constructors, getters, and setters
-
-    public Long getId() {
-        return id;
+    private Player winner;
+    private Player startingPlayer;
+    
+    private Player playRound (List<Player> players, Player startingPlayer){
+        //returns the loser of the round
+        return null;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    private boolean checkWinner(){
+        int notDisqualifiedCount = 0;
+        for (Player player : players) {
+            if (!player.isDisqualified()) {
+                notDisqualifiedCount++;
+            }
+        }
+        return notDisqualifiedCount == 1;
     }
 
-    public List<User> getUsers() {
-        return users;
+    private void endGame(){
+        //set winner
+        for (Player player : players) {
+            if (!player.isDisqualified()) {
+                winner = player;
+            }
+        }
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    private void subtractChips(Player loser){
+        loser.subtractChip();
+    }
+
+    private void setStartingPlayer(Player player){
+        startingPlayer = player;
+    }
+
+    public Player getStartingPlayer(){
+        return startingPlayer;
+    }
+
+    public List<Player> getUsers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public Chat getChat() {
@@ -55,27 +66,4 @@ public class Game implements Serializable {
         this.chat = chat;
     }
 
-    public Lobby getLobby() {
-        return lobby;
-    }
-
-    public void setLobby(Lobby lobby) {
-        this.lobby = lobby;
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void setStarted(boolean started) {
-        this.started = started;
-    }
-
-    public boolean isEnded() {
-        return ended;
-    }
-
-    public void setEnded(boolean ended) {
-        this.ended = ended;
-    }
 }

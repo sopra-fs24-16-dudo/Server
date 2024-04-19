@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 public class Player {
 
     private Hand hand;
-    private Chip [] chips = new Chip[3];
+    private int chips;
     private boolean disqualified = false;
     private long id;
     private String username;
@@ -12,9 +12,7 @@ public class Player {
         this.id = id;
         this.username = username;
         this.hand = new Hand();
-        for (int i = 0; i < 3; i++) {
-            chips[i] = new Chip();
-        }
+        chips = 3;
     }
 
     public void roll() {
@@ -33,7 +31,11 @@ public class Player {
         return hand;
     }
 
-    public Chip[] getChips() {
+    public void subtractChip(){
+        chips--;
+    }
+
+    public int getChips() {
         return chips;
     }
 
