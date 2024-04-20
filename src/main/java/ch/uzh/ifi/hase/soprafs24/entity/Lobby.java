@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.ArrayList;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +32,13 @@ public class Lobby implements Serializable{
 
     @Transient
     public List<Player> players;
+
+    @Transient
+    private Game game;
+
+    public Game getGame() {
+        return game;
+    }
 
     public Lobby() {
         this.leaderboard = createLeaderboard();

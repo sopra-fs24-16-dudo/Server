@@ -69,7 +69,7 @@ public class Game implements Serializable {
         return winner;
     }
 
-    public List<Player> getUsers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
