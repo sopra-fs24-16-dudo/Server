@@ -20,4 +20,14 @@ public class Hand {
     public Dice[] getDices() {
         return dices;
     }
+
+    public Long countSuit(Suit suit){
+        Long count = 0L;
+        for (Dice dice : dices) {
+            if (dice.getSuit() == suit) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

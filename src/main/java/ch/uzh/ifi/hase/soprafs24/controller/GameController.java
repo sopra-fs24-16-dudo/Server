@@ -1,4 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
+import ch.uzh.ifi.hase.soprafs24.entity.Hand;
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
@@ -44,5 +45,20 @@ public class GameController {
             throw new IllegalArgumentException("No players in game");
         }
     }
+    @PostMapping("/game/hand/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Hand rollHand(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        Hand hand = new Hand();
+        hand.roll();
+
+        return hand;
+    }
+
 }
 

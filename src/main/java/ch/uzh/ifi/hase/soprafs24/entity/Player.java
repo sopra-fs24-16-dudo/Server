@@ -10,7 +10,7 @@ public class Player {
 
     public Player() {
         this.hand = new Hand();
-        chips = 3;
+        this.chips = 3;
     }
 
     public void roll() {
@@ -51,5 +51,9 @@ public class Player {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Long countSuit (Suit suit){
+        return hand.countSuit(suit);
     }
 }
