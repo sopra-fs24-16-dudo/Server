@@ -252,4 +252,10 @@ public class LobbyService {
         return RULES;
     }
 
+    public void startGame(Long lobbyId) {
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        lobby.startGame();
+    }
+
 }

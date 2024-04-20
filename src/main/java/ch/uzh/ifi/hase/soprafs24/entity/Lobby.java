@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "LOBBY")
@@ -40,6 +41,8 @@ public class Lobby implements Serializable{
         return game;
     }
 
+    //TODO Implement the delete Player functionality!
+
     public Lobby() {
         this.leaderboard = createLeaderboard();
     }
@@ -60,12 +63,17 @@ public class Lobby implements Serializable{
     }
 
     public void startGame() {
+        game = new Game(players);
+        //game.startGame();
+    }
+
+    public List<Player> getPlayers() {
         players = convertUsersToPlayers(users);
-        Game game = new Game(players);
-        game.startGame();
+        return players;
     }
 
     private List<Player> convertUsersToPlayers(List<User> users) {
+        List<Player> players = new ArrayList<>();
         for (User user : users) {
             Player player = new Player();
             player.setUsername(user.getUsername());
@@ -89,10 +97,10 @@ public class Lobby implements Serializable{
         this.users = users;
     }
 
-
     public Chat getChat() {
         return chat;
     }
+
     public long getId() {
         return id;
     }

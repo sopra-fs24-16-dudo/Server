@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 public class LobbyController {
@@ -128,5 +131,12 @@ public class LobbyController {
     @ResponseBody
     public List<String> getRules() {
         return lobbyService.getRules();
+    }
+
+    @PostMapping("/lobby/start/{lobbyId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void gameStarter(@PathVariable Long lobbyId) {
+        lobbyService.startGame(lobbyId);
     }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 public class GameService {
 
     public List<Player> getPlayers(Lobby lobby) {
-        Game game = lobby.getGame();
-        return game.getPlayers();
+        return lobby.getPlayers();
     }
 }

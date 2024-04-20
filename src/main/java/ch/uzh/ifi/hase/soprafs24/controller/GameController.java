@@ -31,13 +31,18 @@ public class GameController {
         this.userService = userService;
     }
 
-    @GetMapping("/games/players")
+    @GetMapping("/games/players/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Player> getPlayers(@RequestParam Long lobbyId) {
+    public List<Player> getPlayers(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        return gameService.getPlayers(lobby);
+        List<Player> players = gameService.getPlayers(lobby);
+        if (players != null){
+            return players;
+        }
+        else{
+            throw new IllegalArgumentException("No players in game");
+        }
     }
-    
 }
 
