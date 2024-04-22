@@ -4,7 +4,14 @@ import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+
+import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyPostDTO;
+
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,5 +53,37 @@ public class DTOMapperTest {
     assertEquals(user.getName(), userGetDTO.getName());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
     assertEquals(user.getStatus(), userGetDTO.getStatus());
+  }
+
+  @Test
+  public void testCreateLobby_fromLobbyPostDTO_toLobby_success() {
+      // Assuming there's a method to map from LobbyPostDTO to Lobby
+      LobbyPostDTO lobbyPostDTO = new LobbyPostDTO();
+      lobbyPostDTO.setId(123);
+
+      Lobby lobby = DTOMapper.INSTANCE.convertLobbyPostDTOtoEntity(lobbyPostDTO);
+
+      assertEquals(lobbyPostDTO.getId(), lobby.getId());
+  }
+
+  @Test
+  public void testGetLobby_fromLobby_toLobbyGetDTO_success() {
+      Lobby lobby = new Lobby();
+      lobby.setId(123L);
+
+      // Setup users for the lobby
+      User user1 = new User();
+      user1.setId(1L);
+      User user2 = new User();
+      user2.setId(2L);
+      User[] users = { user1, user2 };
+      lobby.setUsers(List.of(users));
+
+      LobbyGetDTO lobbyGetDTO = DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby);
+
+      assertEquals(lobby.getId(), lobbyGetDTO.getId());
+      assertEquals(2, lobbyGetDTO.getUsers().length);  // Ensure users are transferred correctly
+      assertEquals(user1.getId(), lobbyGetDTO.getUsers()[0].getId());
+      assertEquals(user2.getId(), lobbyGetDTO.getUsers()[1].getId());
   }
 }
