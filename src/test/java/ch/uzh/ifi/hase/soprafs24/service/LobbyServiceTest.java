@@ -102,7 +102,6 @@ public class LobbyServiceTest {
         lobby.addUser(newUser);
 
         Lobby updatedLobby = lobbyService.removeUser(lobby.getId(), newUser);
-
         assertFalse(updatedLobby.getUsers().contains(newUser));
     }
 
