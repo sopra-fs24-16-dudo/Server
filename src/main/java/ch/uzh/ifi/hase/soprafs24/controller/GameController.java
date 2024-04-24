@@ -43,19 +43,17 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No players in game");
         }
     }
-    @PostMapping("/game/hand/{userId}")
+    @PostMapping("/games/hand/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Hand rollHand(@PathVariable Long userId) {
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
+    public Hand rollHand(@PathVariable Long lobbyId, @RequestBody Long userId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        Player player = lobby.getPlayerById(userId);
+        if (player.hasRolled()){
+            return player.getHand();
         }
-
-        Hand hand = new Hand();
-        hand.roll();
-
-        return hand;
+        player.roll();
+        return player.getHand();
     }
 
 }

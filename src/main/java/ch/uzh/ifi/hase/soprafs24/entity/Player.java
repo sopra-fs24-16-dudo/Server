@@ -9,9 +9,11 @@ public class Player {
     private String username;
 
     private boolean ready;
+    private boolean rolled;
 
     public Player(User user) {
         this.hand = new Hand();
+        rolled = false;
         this.chips = 3;
         this.id = user.getId();
         this.username = user.getUsername();
@@ -21,6 +23,7 @@ public class Player {
 
     public void roll() {
         hand.roll();
+        rolled = true;
     }
 
     public void setDisqualified(boolean disqualified) {
@@ -69,6 +72,10 @@ public class Player {
 
     public void setReady(boolean ready) {
         this.ready = ready;
+    }
+
+    public boolean hasRolled() {
+        return rolled;
     }
 
 }
