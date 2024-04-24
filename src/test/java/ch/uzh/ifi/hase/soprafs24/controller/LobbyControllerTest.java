@@ -63,17 +63,26 @@ public class LobbyControllerTest {
         Long userId = 1L;
         User user = new User();
         user.setId(userId);
+        Player player = new Player(user);
         Lobby lobby = new Lobby();
         lobby.setId(1L);
 
+        // Mock the retrieval of the User.
         given(userService.getUserById(userId)).willReturn(user);
-        given(lobbyService.createLobby(new Player(user))).willReturn(lobby);
 
+        // Mock the creation of a Player from a User.
+        given(lobbyService.createPlayer(user)).willReturn(player);
+
+        // Ensure the lobbyService.createLobby is called with the mocked Player.
+        given(lobbyService.createLobby(player)).willReturn(lobby);
+
+        // Mock the API call
         mockMvc.perform(post("/lobbies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(userId)))
+                        .content(new ObjectMapper().writeValueAsString(userId))) // Sending ID as JSON.
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is((int) lobby.getId())));
+                .andExpect(jsonPath("$.id", is((int)lobby.getId()))) // Ensure the response has the lobby ID.
+                .andDo(print()); // Print the response for debugging.
     }
 
     /*

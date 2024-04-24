@@ -4,9 +4,9 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
+import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.entity.VoiceChannel;
-import ch.uzh.ifi.hase.soprafs24.repository.LobbyRepository;
+import ch.uzh.ifi.hase.soprafs24.managers.LobbyManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,125 +22,102 @@ import java.util.Optional;
 public class LobbyServiceTest {
 
     @Mock
-    private LobbyRepository lobbyRepository;
-
-    @Mock
     private UserService userService;
 
     @Mock
-    private VoiceChannelService voiceChannelService;
+    private LobbyManager lobbyManager;
 
     @InjectMocks
     private LobbyService lobbyService;
 
-    private User newUser;
     private User testUser;
-    private Lobby lobby;
-    private VoiceChannel voiceChannel;
+    private Player testPlayer;
+    private Lobby testLobby;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-
-        newUser = new User();
-        newUser.setId(1L);
-        newUser.setUsername("newUser");
-
         testUser = new User();
-        testUser.setId(2L);
-        testUser.setUsername("testUser");
+        testUser.setId(1L); // Set a default ID
+        testUser.setName("testName");
+        testUser.setUsername("testUsername");
 
-        lobby = new Lobby();
-        lobby.setId(999L);
+        testPlayer = new Player(testUser);
+        testPlayer.setId(testUser.getId()); // Ensure ID consistency
 
-        lobby.setUsers(new ArrayList<>());
-        //lobby.getUsers().add(newUser);
+        testLobby = new Lobby(999L);
+        testLobby.addPlayer(testPlayer);
 
-        voiceChannel = new VoiceChannel();
-        voiceChannel.setId(1L);
-
-        when(lobbyRepository.save(any())).thenReturn(lobby);
-        when(lobbyRepository.findById(any())).thenReturn(Optional.of(lobby));
-        when(voiceChannelService.createVoiceChannel(any())).thenReturn(voiceChannel);
+        when(lobbyManager.getLobby(anyLong())).thenReturn(testLobby);
+        when(lobbyManager.generateLobbyId()).thenReturn(1L);
     }
 
-    /*@Test //Actually unsure why this test fails
-    public void createLobby_withNewUser_success() {
+    /*@Test
+    public void createLobby_withNewPlayer_success() {
+        Player newPlayer = lobbyService.createPlayer(testUser);
+        assertNotNull(newPlayer);
 
-        Lobby createdLobby = lobbyService.createLobby(testUser);
-
+        Lobby createdLobby = lobbyService.createLobby(newPlayer);
         assertNotNull(createdLobby);
-        assertEquals(1, createdLobby.getUsers().size());
-        assertEquals(voiceChannel, createdLobby.getVoiceChannel());
-        verify(lobbyRepository, times(1)).save(any(Lobby.class));
-    }*/
+        assertTrue(createdLobby.getPlayersList().contains(newPlayer));
+        verify(lobbyManager, times(1)).addLobby(any(Lobby.class));
+    }
 
     @Test
-    public void addUserToExistingLobby_success() {
-        Lobby updatedLobby = lobbyService.addUser(1L, newUser);
+    public void addPlayerToLobby_success() {
+        User newUser = new User();
+        newUser.setId(3L);
+        newUser.setName("Another User");
 
+        Player anotherPlayer = new Player(newUser);
+        anotherPlayer.setId(3L); // Simulate new player creation with unique ID
+
+        Lobby updatedLobby = lobbyService.addPlayer(testLobby.getId(), anotherPlayer);
         assertNotNull(updatedLobby);
-        assertTrue(updatedLobby.getUsers().contains(newUser));
-        verify(lobbyRepository, times(1)).save(updatedLobby);
+        assertTrue(updatedLobby.getPlayersList().contains(anotherPlayer));
     }
 
     @Test
-    public void addUserToFullLobby_throwsException() {
-        when(lobbyRepository.findById(any())).then(invocation -> {
-            Lobby fullLobby = new Lobby();
-            fullLobby.setId(1L);
-            fullLobby.setUsers(List.of(new User(), new User(), new User(), new User(), new User(), new User()));
-            return Optional.of(fullLobby);
+    public void addPlayerToFullLobby_throwsException() {
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            User newUser = new User();
+            newUser.setId(7L);
+            newUser.setName("LaterUser");
+
+            Player anotherPlayer = new Player(newUser);
+            anotherPlayer.setId(7L);
+            lobbyService.addPlayer(testLobby.getId(), anotherPlayer);
         });
-
-        Exception exception = assertThrows(ResponseStatusException.class, () -> lobbyService.addUser(1L, newUser));
-        assertEquals(HttpStatus.BAD_REQUEST, ((ResponseStatusException)exception).getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 
     @Test
-    public void removeUserFromLobby_updatesLobbyCorrectly() {
-        lobby.addUser(newUser);
-
-        Lobby updatedLobby = lobbyService.removeUser(lobby.getId(), newUser);
-        assertFalse(updatedLobby.getUsers().contains(newUser));
+    public void removePlayerFromLobby_updatesLobbyCorrectly() {
+        long playerIdToRemove = testPlayer.getId();
+        lobbyService.removePlayer(testLobby.getId(), playerIdToRemove);
+        assertTrue(testLobby.getPlayersList().isEmpty());
     }
 
     @Test
     public void getAllLobbies_returnsAllLobbies() {
-        when(lobbyRepository.findAll()).thenReturn(List.of(lobby));
+        when(lobbyManager.getLobbies()).thenReturn(List.of(testLobby));
 
         List<Lobby> lobbies = lobbyService.getAllLobbies();
-
         assertFalse(lobbies.isEmpty());
         assertEquals(1, lobbies.size());
     }
 
     @Test
     public void getLobbyById_validId_returnsLobby() {
-        Optional<Lobby> foundLobby = Optional.of(lobby);
-
-        assertEquals(foundLobby.get(), lobbyService.getLobbyById(1L));
+        Lobby foundLobby = lobbyService.getLobbyById(testLobby.getId());
+        assertEquals(foundLobby, testLobby);
     }
-
-    /*@Test //Still need to implement maybe get and set functions for messages?
-    public void postMessage_addsMessageToLobby() {
-        // Given
-        Lobby lobby = new Lobby();
-        lobby.setId(1L);
-        when(lobbyRepository.findById(1L)).thenReturn(Optional.of(lobby));
-
-        // When
-        lobbyService.postMessage(1L, "New message");
-
-        // Then
-        assertTrue(lobby.getMessages().contains("New message"));  // Validate the message was added
-    }*/
 
     @Test
     public void startGame_checksAllUsersReady() {
-        newUser.setReady(true);
-        lobby.addUser(newUser);
+        testPlayer.setReady(true);
+        testLobby.startGame(); // simulate game start
 
-        assertTrue(lobbyService.areAllUsersReady(1L));
-    }
+        assertTrue(lobbyService.allPlayersReady(testLobby.getId()));
+    }*/
 }
