@@ -93,5 +93,9 @@ public class Game implements Serializable {
         return isOpen;
     }
 
+    public List<Player> getPlayers(){
+        return new ArrayList<>(players.values());
+    }
+
 
 }

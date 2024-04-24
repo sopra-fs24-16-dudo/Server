@@ -90,6 +90,11 @@ public class LobbyService {
         }
     }
 
+    public List<Player> getPlayersInGame(Long lobbyId) {
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        return lobby.getPlayersInGame();
+    }
+
     public List<Player> getPlayersInLobby(Long lobbyId) {
         Lobby lobby = lobbyManager.getLobby(lobbyId);
         return lobby.getPlayersList();

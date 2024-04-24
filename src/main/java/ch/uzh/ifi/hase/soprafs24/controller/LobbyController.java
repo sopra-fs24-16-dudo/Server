@@ -101,7 +101,7 @@ public class LobbyController {
         // Check if all users in the lobby are ready
         boolean allUsersReady = lobbyService.allPlayersReady(lobbyId);
         // Return true if all users are ready, otherwise false
-        return ResponseEntity.ok(allUsersReady);
+        return ResponseEntity.ok(allUsersReady && lobbyService.getPlayersInLobby(lobbyId).size() > 1);
     }
 
     @PostMapping("/lobby/chat/{lobbyId}/{userId}")

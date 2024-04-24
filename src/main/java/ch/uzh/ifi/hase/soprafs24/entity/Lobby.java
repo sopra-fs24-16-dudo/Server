@@ -99,5 +99,11 @@ public class Lobby implements Serializable{
         return players.get(playerId);
     }
 
+    public List<Player> getPlayersInGame() {
+        return game.getPlayers();
+    }
+
+
+
 
 }
