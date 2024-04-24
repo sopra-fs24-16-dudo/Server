@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ch.uzh.ifi.hase.soprafs24.entity.Game;
@@ -12,7 +13,14 @@ import java.util.List;
 @Transactional
 public class GameService {
 
-    public List<Player> getPlayers(Lobby lobby) {
-        return lobby.getPlayers();
+    private final LobbyService lobbyService;
+
+    GameService(LobbyService lobbyService) {
+        this.lobbyService = lobbyService;
+    }
+
+
+    public Player createPlayer (User user){
+        return new Player(user);
     }
 }

@@ -4,21 +4,21 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Entity
-@Table(name = "VOICE_CHANNEL")
+@Table(name = "VOICECHANNEL")
 public class VoiceChannel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+
     private String channelId;
 
-    @OneToOne(mappedBy = "voiceChannel", cascade = CascadeType.ALL)
     private Lobby lobby;
 
-    @OneToMany(mappedBy = "voiceChannel", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "voiceChannels")
     private Set<User> users = new HashSet<>();
 
     public VoiceChannel() {
@@ -62,12 +62,12 @@ public class VoiceChannel {
 
     public void addUser(User user) {
         this.users.add(user);
-        user.setVoiceChannel(this);
+        //user.setVoiceChannel(this);
     }
 
     public void removeUser(User user) {
         this.users.remove(user);
-        user.setVoiceChannel(null);
+        //user.setVoiceChannel(null);
     }
 
     public void clearUsers() {

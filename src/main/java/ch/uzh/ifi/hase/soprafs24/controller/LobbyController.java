@@ -1,10 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
+import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.GameService;
 import ch.uzh.ifi.hase.soprafs24.service.LobbyService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -23,9 +25,11 @@ public class LobbyController {
     private final LobbyService lobbyService;
     private final UserService userService;
 
+
     LobbyController(LobbyService lobbyService, UserService userService) {
         this.lobbyService = lobbyService;
         this.userService = userService;
+
     }
     @GetMapping("/lobbies")
     @ResponseStatus(HttpStatus.OK)
@@ -46,68 +50,58 @@ public class LobbyController {
     @ResponseBody
     public LobbyGetDTO createLobby(@RequestBody Long newUser) {
         User userToAdd = userService.getUserById(newUser);
+        Player player = lobbyService.createPlayer(userToAdd);
         // convert API lobby to internal representation
-        Lobby createdLobby = lobbyService.createLobby(userToAdd);
+        Lobby createdLobby = lobbyService.createLobby(player);
         // create lobby
         // convert internal representation of lobby back to API
         return DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby);
     }
 
-    @PutMapping("/lobby/user/{lobbyId}")
+    @PutMapping("/lobby/players/{lobbyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public ResponseEntity<?> addUsertoLobby(@PathVariable Long lobbyId, @RequestBody Long newUser) {
+    public ResponseEntity<?> addPlayerToLobby(@PathVariable Long lobbyId, @RequestBody Long newUser) {
         User userToAdd = userService.getUserById(newUser);
-        Lobby updatedLobby = lobbyService.addUser(lobbyId, userToAdd);
-
+        Player player = lobbyService.createPlayer(userToAdd);
+        if (lobbyService.playerInLobby(lobbyId, player)) {
+            throw new IllegalArgumentException("Player already in lobby");
+        }
+        Lobby updatedLobby = lobbyService.addPlayer(lobbyId, player);
         if (updatedLobby == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build(); 
     }
 
-    @GetMapping("/lobby/user/{lobbyId}") // Corrected the path variable syntax
+    @GetMapping("/lobby/players/{lobbyId}") // Corrected the path variable syntax
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<User> getUsersInLobby(@PathVariable Long lobbyId) {
-        return lobbyService.getUsersInLobby(lobbyId);
+    public List<Player> getPlayersFromLobby(@PathVariable Long lobbyId) {
+        return lobbyService.getPlayersInLobby(lobbyId);
     }
 
     @PostMapping("/lobby/exit/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<?> exitLobby(@PathVariable Long lobbyId, @RequestBody Long exitUser) {
-        User userToRemove = userService.getUserById(exitUser);
-        Lobby updatedLobby = lobbyService.removeUser(lobbyId, userToRemove);
-
-        if (updatedLobby == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.noContent().build();
+    public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        lobbyService.removePlayer(lobby, playerId);
     }
-    @PutMapping("/lobby/user/{lobbyId}/ready")
+    @PutMapping("/lobby/player/{lobbyId}/ready")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void updateUserReadyStatus(@PathVariable Long lobbyId, @RequestBody Long userId) {
-        User userToUpdate = userService.getUserById(userId);
-        lobbyService.updateUserReadyStatus(lobbyId, userToUpdate);
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        Player player = lobby.getPlayerById(userId);
+        lobbyService.updatePlayerReadyStatus(player);
     }
-    @GetMapping("/lobby/user/{lobbyId}/ready")
-    public ResponseEntity<Boolean> areAllUsersReady(@PathVariable Long lobbyId) {
+    @GetMapping("/lobby/player/{lobbyId}/ready")
+    public ResponseEntity<Boolean> areAllPlayerReady(@PathVariable Long lobbyId) {
         // Check if all users in the lobby are ready
-        boolean allUsersReady = lobbyService.areAllUsersReady(lobbyId);
-
+        boolean allUsersReady = lobbyService.allPlayersReady(lobbyId);
         // Return true if all users are ready, otherwise false
         return ResponseEntity.ok(allUsersReady);
-    }
-    @PostMapping("/lobby/start")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void startGame(@PathVariable Long lobbyId) {
-        // TODO Start the game logic here
-
-        // Reset the readiness status of all users in the lobby to false
-        lobbyService.resetAllUsersReadyStatus(lobbyId);
     }
 
     @PostMapping("/lobby/chat/{lobbyId}/{userId}")

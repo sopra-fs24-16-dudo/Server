@@ -29,6 +29,7 @@ public class VoiceChannelService {
         this.voiceChannelRepository = voiceChannelRepository;
         this.userService = userService;
     }
+    /*
 
     public VoiceChannel createVoiceChannel(Lobby lobby) {
         VoiceChannel voiceChannel = new VoiceChannel();
@@ -102,4 +103,6 @@ public class VoiceChannelService {
 
         voiceChannelRepository.delete(voiceChannel);
     }
+
+     */
 }

@@ -21,6 +21,7 @@ public class VoiceChannelController {
         this.lobbyService = lobbyService;
     }
 
+    /*
     @PostMapping("/lobby/{lobbyId}/voice-channel/join")
     public ResponseEntity<String> joinVoiceChannel(@PathVariable Long lobbyId, @RequestBody Long userId) {
         try {
@@ -30,6 +31,8 @@ public class VoiceChannelController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to join voice channel");
         }
     }
+
+
 
     @PostMapping("/lobby/{lobbyId}/voice-channel/leave")
     public ResponseEntity<String> leaveVoiceChannel(@PathVariable Long lobbyId, @RequestBody Long userId) {
@@ -47,4 +50,6 @@ public class VoiceChannelController {
         // Delete the voice channel
         voiceChannelService.deleteVoiceChannelById(voiceChannelId);
     }
+
+     */
 }

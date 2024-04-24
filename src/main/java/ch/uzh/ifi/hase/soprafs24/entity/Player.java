@@ -4,13 +4,19 @@ public class Player {
 
     private Hand hand;
     private int chips;
-    private boolean disqualified = false;
+    private boolean disqualified;
     private long id;
     private String username;
 
-    public Player() {
+    private boolean ready;
+
+    public Player(User user) {
         this.hand = new Hand();
         this.chips = 3;
+        this.id = user.getId();
+        this.username = user.getUsername();
+        disqualified = false;
+        ready = false;
     }
 
     public void roll() {
@@ -56,4 +62,13 @@ public class Player {
     public Long countSuit (Suit suit){
         return hand.countSuit(suit);
     }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
 }

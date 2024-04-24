@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
@@ -24,10 +25,8 @@ public class GameController {
 
     private final LobbyService lobbyService;
     private final UserService userService;
-    private final GameService gameService;
 
-    GameController(GameService gameService, LobbyService lobbyService, UserService userService) {
-        this.gameService = gameService;
+    GameController(LobbyService lobbyService, UserService userService) {
         this.lobbyService = lobbyService;
         this.userService = userService;
     }
@@ -36,13 +35,12 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<Player> getPlayers(@PathVariable Long lobbyId) {
-        Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        List<Player> players = gameService.getPlayers(lobby);
+        List<Player> players = lobbyService.getPlayersInLobby(lobbyId);
         if (players != null){
             return players;
         }
         else{
-            throw new IllegalArgumentException("No players in game");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No players in game");
         }
     }
     @PostMapping("/game/hand/{userId}")

@@ -1,10 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.entity.Chat;
-import ch.uzh.ifi.hase.soprafs24.entity.VoiceChannel;
-import ch.uzh.ifi.hase.soprafs24.repository.LobbyRepository;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
+import ch.uzh.ifi.hase.soprafs24.managers.LobbyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,144 +36,81 @@ public class LobbyService {
 
     private final Logger log = LoggerFactory.getLogger(LobbyService.class);
 
-    private final LobbyRepository lobbyRepository;
+    private final LobbyManager lobbyManager;
 
-    private UserService userService;
     private VoiceChannelService voiceChannelService;
 
-    @Autowired
-    public LobbyService(@Qualifier("lobbyRepository") LobbyRepository lobbyRepository, UserService userService, VoiceChannelService voiceChannelService) {
-        this.lobbyRepository = lobbyRepository;
-        this.userService = userService;
+
+    public LobbyService() {
+        this.lobbyManager = new LobbyManager();
         this.voiceChannelService = voiceChannelService;
     }
 
     public Lobby getLobbyById(Long lobbyId) {
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(lobbyId);
-        Lobby foundLobby = optionalLobby.orElse(null);
-        if (foundLobby != null){
-            return foundLobby;
-        } else {
-            return null;
-        }
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        return lobby;
     }
 
     public List<Lobby> getAllLobbies() {
-        return lobbyRepository.findAll();
+        return lobbyManager.getLobbies();
     }
 
-    public Lobby createLobby(User newUser) {
-
-        Lobby newLobby = new Lobby();
-        checkIfLobbyExists(newLobby.getId());
-
-        VoiceChannel voiceChannel = voiceChannelService.createVoiceChannel(newLobby);
+    public Lobby createLobby(Player newPlayer) {
+        Long id = lobbyManager.generateLobbyId();
+        Lobby newLobby = new Lobby(id);
+        //VoiceChannel voiceChannel = voiceChannelService.createVoiceChannel(newLobby);
         // Associate the voice channel with the lobby
-        newLobby.setVoiceChannel(voiceChannel);
-
-        // Initialize currentUsers as an empty list
-        List<User> currentUsers = new ArrayList<>();
-        // Add the new user to the list
-        currentUsers.add(newUser);
-        newLobby.setUsers(currentUsers);
-
-        lobbyRepository.save(newLobby);
-        lobbyRepository.flush();
+        //newLobby.setVoiceChannel(voiceChannel);
+        newLobby.addPlayer(newPlayer);
+        lobbyManager.addLobby(newLobby);
         log.debug("Created Information for Lobby: {}", newLobby.getId());
         return newLobby;
     }
 
-    public Lobby addUser(Long lobbyId, User newUser) {
-        Lobby updatedlobby = getLobbyById(lobbyId);
+    public Player createPlayer (User user){
+        return new Player(user);
+    }
 
-        if (updatedlobby == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby does not exist!");
-        }
-
-        if (checkIfUserInLobby(lobbyId, newUser) != null){
+    public Lobby addPlayer(Long lobbyId, Player player) {
+        Lobby updatedlobby = lobbyManager.getLobby(lobbyId);
+        if (playerInLobby(lobbyId, player)){
             return updatedlobby;
         }
-
         checkIfLobbyFull(lobbyId);
-
-        updatedlobby.addUser(newUser);
-       
-        // Save the updated lobby
-        lobbyRepository.save(updatedlobby);
-        lobbyRepository.flush();
+        updatedlobby.addPlayer(player);
         log.debug("Added user to Lobby: {}", updatedlobby.getId());
-
         return updatedlobby;
     }
 
     //check if lobby with id is full (max. 6 users)
     private void checkIfLobbyFull(Long lobbyId){
-        Optional<Lobby> optionalLobby = lobbyRepository.findById(lobbyId);
-        Lobby lobby = optionalLobby.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found"));
-
-        List<User> users = lobby.getUsers();
-        int numberOfUsers = users.size();
-
-        if (numberOfUsers >= 6) {
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        if (lobby.players.size() >= 6) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lobby is full");
         }
     }
 
-    //check if lobby with id already exists
-    private void checkIfLobbyExists(Long lobbyId) {
-        Optional<Lobby> lobby = lobbyRepository.findById(lobbyId);
-        if (lobby.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Lobby with id already exists");
-        }
-
+    public List<Player> getPlayersInLobby(Long lobbyId) {
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        return lobby.getPlayersList();
     }
 
-    public List<User> getUsersInLobby(Long lobbyId) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
-        return lobby.getUsers();
-    }
-
-    private User checkIfUserInLobby(Long lobbyId, User user) {
+    public boolean playerInLobby(Long lobbyId, Player player) {
 
         Lobby lobby = getLobbyById(lobbyId);
-        List<User> currentUsers = lobby.getUsers();
 
-        if (!currentUsers.contains(user)) {
+        if (!lobby.getPlayers().containsValue(player)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public Lobby removePlayer(Lobby lobby, Long playerId) {
+        lobby.deletePlayer(playerId);
+        if (lobby.getPlayersList().isEmpty()) {
+            deleteLobby(lobby.getId());
             return null;
-        }
-        return user;
-    }
-
-
-    public Lobby removeUser(Long lobbyId, User userToRemove) {
-        Lobby lobby = getLobbyById(lobbyId);
-
-        // Check if the lobby exists
-        if (lobby == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId);
-        }
-
-        // Retrieve the current list of users in the lobby
-        List<User> currentUsers = lobby.getUsers();
-
-        // Check if the user to remove is in the lobby
-        if (!currentUsers.contains(userToRemove)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not in the lobby");
-        }
-
-        // Remove the user from the list of users
-        currentUsers.remove(userToRemove);
-
-        // Set the updated list of users back to the lobby
-        lobby.setUsers(currentUsers);
-
-        if (currentUsers.isEmpty()) {
-            deleteLobby(lobbyId);
-        } else {
-            // Save the updated lobby to the repository
-            lobby = lobbyRepository.save(lobby);
-            log.debug("Removed user from Lobby: {}", lobby.getId());
         }
         return lobby;
     }
@@ -191,60 +125,52 @@ public class LobbyService {
         }
 
         // Delete the lobby
-        lobbyRepository.delete(lobby);
+        lobbyManager.removeLobby(lobbyId);
 
         log.debug("Deleted lobby: {}", lobbyId);
     }
-    public void updateUserReadyStatus(Long lobbyId, User userReady) {
-        // Find lobby by ID
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
-
-        Optional<User> optionalUser = lobby.getUsers().stream()
-                .filter(u -> u.getId().equals(userReady.getId()))
-                .findFirst();
-        if (optionalUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in lobby");
-        }
+    public void updatePlayerReadyStatus(Player player) {
         // Update user's readiness status
-        userReady.setReady(true);
-        lobbyRepository.save(lobby);
-
+        if (player.isReady()) {
+            player.setReady(false);
+        } else {
+            player.setReady(true);
         }
-    public boolean areAllUsersReady(Long lobbyId) {
-
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
-        // Get all users in the lobby
-        List<User> usersInLobby = getUsersInLobby(lobbyId);
-
-        // Check if all users in the lobby are ready
-        return usersInLobby.stream().allMatch(User::isReady); // Assuming there's a method isReady() in the User entity
     }
-    public void resetAllUsersReadyStatus(Long lobbyId) {
-        // Retrieve the lobby by ID
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+    public boolean allPlayersReady(Long lobbyId) {
+
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        // Get all users in the lobby
+        List<Player> playersInLobby = lobby.getPlayersList();
+
+        for (Player player : playersInLobby) {
+            if (!player.isReady()) {
+                return false;
+            }
+        }return true;
+    }
+    //public void resetAllUsersReadyStatus(Long lobbyId) {
+    //    // Retrieve the lobby by ID
+    //    Lobby lobby = lobbyRepository.findById(lobbyId)
+    //            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
 
         // Reset readiness status of all users in the lobby to false
-        List<User> users = lobby.getUsers();
-        for (User user : users) {
-            user.setReady(false);
-        }
+    //    List<User> users = lobby.getUsers();
+    //    for (User user : users) {
+    //        user.setReady(false);
+    //    }
 
         // Save the updated lobby
-        lobbyRepository.save(lobby);
-    }
+    //    lobbyRepository.save(lobby);
+    //}
 
     public void postMessage(long lobbyId, String message) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
         lobby.getChat().addMessage(message);
     }
 
     public List<String> getMessages(long lobbyId) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
         return lobby.getChat().getMessages();
     }
 
@@ -253,9 +179,7 @@ public class LobbyService {
     }
 
     public void startGame(Long lobbyId) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
         lobby.startGame();
     }
-
 }

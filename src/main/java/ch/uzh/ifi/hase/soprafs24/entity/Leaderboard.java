@@ -5,30 +5,30 @@ import java.util.HashMap;
 
 public class Leaderboard {
 
-    private Map<User, Long> userPoints;
+    private Map<Player, Long> userPoints;
 
     public Leaderboard() {
         this.userPoints = new HashMap<>();
     }
 
-    public Map<User, Long> getUserPoints() {
-        return userPoints;
-    }
+    //public Map<User, Long> getUserPoints() {
+       // return userPoints;
+  //  }
 
-    public void setUserPoints(Map<User, Long> userPoints) {
+    public void setUserPoints(Map<Player, Long> userPoints) {
         this.userPoints = userPoints;
     }
 
-    public void addUser(User user) {
-        Long currentPoints = this.userPoints.get(user);
+    public void addUser(Player player) {
+        Long currentPoints = this.userPoints.get(player);
         if (currentPoints == null) {
             // Der Benutzer ist noch nicht in der Map, also fügen wir ihn mit einem Punkt hinzu.
-            this.userPoints.put(user, 0L);
+            this.userPoints.put(player, 0L);
         }
     }
 
-    public void updatePoints(User user) {
-        Long currentPoints = this.userPoints.get(user);
-        this.userPoints.put(user, currentPoints + 1);
-    }
+   // public void updatePoints(User user) {
+   //     Long currentPoints = this.userPoints.get(user);
+   //     this.userPoints.put(user, currentPoints + 1);
+   // }
 }

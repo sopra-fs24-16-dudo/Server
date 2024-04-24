@@ -6,6 +6,7 @@ import org.springframework.boot.availability.ReadinessState;
 import java.time.LocalDate;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Internal User Representation
@@ -44,11 +45,17 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private UserStatus status;
-  @Column(nullable = false)
-  private boolean ready;
-  @ManyToOne
-  @JoinColumn(name = "voice_channel_id")
-  private VoiceChannel voiceChannel;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_voice_channel",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "voice_channel_id")
+    )
+    private Set<VoiceChannel> voiceChannels;
+
+    // getters and setters...
+
 
   public Long getId() {
     return id;
@@ -105,9 +112,6 @@ public class User implements Serializable {
   public void setStatus(UserStatus status) {
     this.status = status;
   }
-  public boolean isReady() { return ready; }
-  public void setReady(boolean ready) { this.ready = ready; }
-  public VoiceChannel getVoiceChannel() { return voiceChannel; }
 
-  public void setVoiceChannel(VoiceChannel voiceChannel) { this.voiceChannel = voiceChannel; }
+ 
 }
