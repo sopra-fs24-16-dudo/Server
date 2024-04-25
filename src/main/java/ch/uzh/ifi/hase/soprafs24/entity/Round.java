@@ -24,11 +24,11 @@ public class Round {
         setState(startingPlayer);
         this.lastPlayer = null;
         this.loser = null;
-        this.SuitCounter = state.getSuitCounter(players);
         this.currentBid = new Bid();
         for (Player player : players) {
             player.roll();
         }
+        this.SuitCounter = state.getSuitCounter(players);
     }
 
     public void placeBid(Bid bid){
@@ -96,6 +96,18 @@ public class Round {
                 lastPlayer = p;
             }
         }
+    }
+
+    public Map<Suit, Long> getSuitCounter() {
+        return SuitCounter;
+    }
+
+    public List<Hand> getHands(){
+        List<Hand> hands = null;
+        for (Player player : players) {
+            hands.add(player.getHand());
+        }
+        return hands;
     }
 
     @Override

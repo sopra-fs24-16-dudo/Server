@@ -147,5 +147,20 @@ public class GameController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobby.startRound();
     }
-}
 
+    @GetMapping("/games/counter/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getSuitCounter(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        return lobby.getRound().getSuitCounter().toString();
+    }
+
+    @GetMapping("/games/hands/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getHands(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        return lobby.getHands().toString();
+    }
+}

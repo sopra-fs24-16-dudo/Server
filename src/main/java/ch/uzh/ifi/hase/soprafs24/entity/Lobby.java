@@ -143,5 +143,9 @@ public class Lobby implements Serializable{
         return game.getLoser();
     }
 
+    public List<Hand> getHands(){
+        return game.getHands();
+    }
+
 
 }

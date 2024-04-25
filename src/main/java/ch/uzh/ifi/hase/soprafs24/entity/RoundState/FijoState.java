@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.entity.RoundState;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Bid;
+import ch.uzh.ifi.hase.soprafs24.entity.Dice;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.Suit;
 
@@ -29,10 +30,7 @@ public class FijoState implements RoundState {
         return lastPlayer.getId();
     }
 
-    @Override
-    public Long count(Suit suit, Player player) {
-        return player.countSuit(suit);
-    }
+
 
     @Override
     public List<Bid> getValidBids(Bid currentBid, Player bidder, Long playerSize) {
@@ -73,19 +71,19 @@ public class FijoState implements RoundState {
 
     @Override
     public Map<Suit, Long> getSuitCounter(List<Player> players) {
-        Map<Suit, Long> map = new HashMap<>();
-        //initialize the map with 0 for each suit
-        //for each suit, count the number of dices with that suit in all players' hand and return the map
+        Map<Suit, Long> suitCounter = new HashMap<>();
+        // Initialize the map
+        for (Suit suit : Suit.values()) {
+            suitCounter.put(suit, 0L);
+        }
+
         for (Player player : players) {
-            for (Suit suit : Suit.values()) {
-                if (map.containsKey(suit)){
-                    map.put(suit, map.get(suit) + count(suit, player));
-                } else {
-                    map.put(suit, count(suit, player));
-                }
+            for (Dice dice : player.getHand().getDices()) {
+                // Increase the counter for the card's suit
+                suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
             }
         }
-        return map;
+        return suitCounter;
     }
 
     @Override

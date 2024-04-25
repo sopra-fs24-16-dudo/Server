@@ -157,6 +157,10 @@ public class Game implements Serializable {
         round.placeBid(bid);
     }
 
+    public List<Hand> getHands(){
+        return round.getHands();
+    }
+
     public void dudo(){
         round.dudo();
         startingPlayer = players.get(round.getLoserId());

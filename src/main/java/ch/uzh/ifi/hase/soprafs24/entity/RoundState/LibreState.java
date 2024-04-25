@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.entity.RoundState;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Bid;
+import ch.uzh.ifi.hase.soprafs24.entity.Dice;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.Suit;
 
@@ -24,23 +25,12 @@ public class LibreState implements RoundState {
 
     @Override
     public Long dudo(Bid currentBid, Map <Suit, Long> suitCounter, Player currentPlayer, Player lastPlayer) {
-        if (currentPlayer.getId() == lastPlayer.getId()){
-            throw new IllegalArgumentException("Cannot dudo on the first bid");
-        }
         Long bidAmount = currentBid.getAmount();
         Long totalAmount = suitCounter.get(currentBid.getSuit());
         if (totalAmount <= bidAmount){
             return currentPlayer.getId();
         }
         return lastPlayer.getId();
-    }
-
-    @Override
-    public Long count(Suit suit, Player player) {
-        if (suit.equals(Suit.ACE)){
-            return player.countSuit(Suit.ACE);
-        }
-        return player.countSuit(suit) + player.countSuit(Suit.ACE);
     }
 
     @Override
@@ -72,29 +62,27 @@ public class LibreState implements RoundState {
 
     @Override
     public Map<Suit, Long> getSuitCounter(List<Player> players) {
-        Map<Suit, Long> map = new HashMap<>();
-        Long aceCount = 0L;
-
-        // Count the number of aces first
-        for (Player player : players) {
-            aceCount += count(Suit.ACE, player);
-        }
-
-        // Initialize the map with the count of aces for each suit
+        Map<Suit, Long> suitCounter = new HashMap<>();
+        // Initialize the map
         for (Suit suit : Suit.values()) {
-            map.put(suit, aceCount);
+            suitCounter.put(suit, 0L);
         }
 
-        // For each suit, add the number of dices with that suit in all players' hand to the map
         for (Player player : players) {
-            for (Suit suit : Suit.values()) {
-                if (suit != Suit.ACE) {
-                    map.put(suit, map.get(suit) + count(suit, player));
+            for (Dice dice : player.getHand().getDices()) {
+                // Increase the counter for the card's suit
+                if (dice.getSuit() != Suit.ACE)
+                    suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
+
+                // If the card is an Ace, increase the counter for all suits
+                if (dice.getSuit() == Suit.ACE) {
+                    for (Suit suit : Suit.values()) {
+                        suitCounter.put(suit, suitCounter.get(suit) + 1);
+                    }
                 }
             }
         }
-
-        return map;
+        return suitCounter;
     }
 
     @Override
