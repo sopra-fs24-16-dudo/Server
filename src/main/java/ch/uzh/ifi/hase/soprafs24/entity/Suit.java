@@ -9,7 +9,21 @@ public enum Suit {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
+    public static Suit getSuit(String suit) {
+        if (suit.equals("NINE")) {
+            return NINE;
+        } else if (suit.equals("TEN")) {
+            return TEN;
+        } else if (suit.equals("JACK")) {
+            return JACK;
+        } else if (suit.equals("QUEEN")) {
+            return QUEEN;
+        } else if (suit.equals("KING")) {
+            return KING;
+        } else if (suit.equals("ACE")) {
+            return ACE;
+        } else {
+            throw new IllegalArgumentException("Invalid suit");
+        }
     }
 }

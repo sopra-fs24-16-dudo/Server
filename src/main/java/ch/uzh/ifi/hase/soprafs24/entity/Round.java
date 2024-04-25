@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
 
@@ -8,34 +9,106 @@ import java.util.Map;
 
 public class Round {
 
-    private RoundState state;
+    private RoundState state = null;
     private List<Player> players;
     private Player currentPlayer;
     private Player lastPlayer;
+
     private Player loser;
     private Map<Suit, Long> SuitCounter;
     private Bid currentBid;
 
-    public Round(List<Player> players){
+    public Round(List<Player> players, Player startingPlayer){
         this.players = players;
-        this.state = new LibreState();
-        this.currentPlayer = players.get(0);
-        this.lastPlayer = players.get(players.size()-1);
+        this.currentPlayer = startingPlayer;
+        setState(startingPlayer);
+        this.lastPlayer = null;
         this.loser = null;
         this.SuitCounter = state.getSuitCounter(players);
-        this.currentBid = new Bid(Suit.ACE, 1L);
+        this.currentBid = new Bid();
+        for (Player player : players) {
+            player.roll();
+        }
     }
 
     public void placeBid(Bid bid){
-        List<Bid> validBids = state.getValidBids(currentBid, currentPlayer);
+        List<Bid> validBids = state.getValidBids(currentBid, currentPlayer, (long) players.size());
         currentBid = state.placeBid(bid, validBids);
+        setLastPlayer(currentPlayer);
+        setNextPlayer();
     }
     public void dudo(){
-        loser = state.dudo(currentBid, SuitCounter, players, currentPlayer, lastPlayer);
+        Long loserId = state.dudo(currentBid, SuitCounter, currentPlayer, lastPlayer);
+        for (Player player : players) {
+            if (player.getId() == loserId){
+                loser = player;
+            }
+        }
     }
 
-    public void setState(RoundState state){
-        this.state = state;
+    public void setState(Player startingPlayer){
+        if (startingPlayer.getChips() > 1) {
+            this.state = new LibreState();
+        }
+        else {
+            this.state = new FijoState();
+        }
     }
+
+    public Long getLoserId(){
+        return loser.getId();
+    }
+
+    public Bid getCurrentBid() {
+        return currentBid;
+    }
+
+    public Bid getNextBid(){
+        return state.getNextBid(currentBid, currentPlayer, (long) players.size());
+    }
+
+    public List<Bid> getValidBids(){
+        return state.getValidBids(currentBid, currentPlayer, (long) players.size());
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public Player getLastPlayer() {
+        return lastPlayer;
+    }
+
+    public void setNextPlayer(){
+        int index = players.indexOf(currentPlayer);
+        for (int i = 1; i < players.size(); i++) {
+            currentPlayer = players.get((index + i) % players.size());
+            if (currentPlayer.getChips() > 0){
+                return;
+            }
+        }
+    }
+
+    public void setLastPlayer(Player player) {
+        //find the player in the list of players that matches the ID of player
+        for (Player p : players) {
+            if (p.getId() == (player.getId())) {
+                lastPlayer = p;
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Round{" +
+                "state=" + state +
+                ", players=" + players +
+                ", currentPlayer=" + currentPlayer +
+                ", SuitCounter=" + SuitCounter +
+                ", currentBid=" + currentBid +
+                '}';
+    }
+
+
 
 }

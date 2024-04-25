@@ -11,8 +11,6 @@ import java.util.Map;
 
 public class FijoState implements RoundState {
 
-
-
     @Override
     public Bid placeBid(Bid bid, List<Bid> validBids) {
         if (!validBids.contains(bid)){
@@ -22,14 +20,13 @@ public class FijoState implements RoundState {
     }
 
     @Override
-    public Player dudo(Bid currentBid, Map<Suit, Long> suitCounter, List<Player> players, Player currentPlayer,
-                       Player lastPlayer) {
+    public Long dudo(Bid currentBid, Map <Suit, Long> suitCounter, Player currentPlayer, Player lastPlayer) {
         Long bidAmount = currentBid.getAmount();
-        Long totalAmount = 0L;
+        Long totalAmount = suitCounter.get(currentBid.getSuit());
         if (totalAmount <= bidAmount){
-            return currentPlayer;
+            return currentPlayer.getId();
         }
-        return lastPlayer;
+        return lastPlayer.getId();
     }
 
     @Override
@@ -38,23 +35,32 @@ public class FijoState implements RoundState {
     }
 
     @Override
-    public List<Bid> getValidBids(Bid currentBid, Player bidder) {
+    public List<Bid> getValidBids(Bid currentBid, Player bidder, Long playerSize) {
         List<Bid> validBids = new ArrayList<>();
-        if (bidder.getChips() == 0){
+        Long maxAmount = playerSize * 5;
+        if (currentBid.getSuit() == null){
             for (Suit suit : Suit.values()) {
-                for (Long value = 1L; value <= 6; value++) {
+                for (Long value = 1L; value <= maxAmount; value++) {
+                    Bid newBid = new Bid(suit, value);
+                    validBids.add(newBid);
+                }
+            }
+            return validBids;
+        }
+        if (bidder.getChips() == 1){
+            for (Suit suit : Suit.values()) {
+                for (Long value = 1L; value <= maxAmount; value++) {
                     Bid newBid = new Bid(suit, value);
                     if (newBid.getAmount() > currentBid.getAmount() ||
                             (newBid.getAmount() == currentBid.getAmount() &&
-                                newBid.getSuit().compareTo(currentBid.getSuit()) > 0)
-                            )
+                                    newBid.getSuit().compareTo(currentBid.getSuit()) > 0)
+                    )
                         validBids.add(newBid);
-
                 }
             }
         }else {
             for (Suit suit : Suit.values()) {
-                for (Long value = 1L; value <= 6; value++) {
+                for (Long value = 1L; value <= maxAmount; value++) {
                     Bid newBid = new Bid(suit, value);
                     if (newBid.getAmount() > currentBid.getAmount() && newBid.getSuit().equals(currentBid.getSuit())) {
                         validBids.add(newBid);
@@ -80,6 +86,16 @@ public class FijoState implements RoundState {
             }
         }
         return map;
+    }
+
+    @Override
+    public Bid getNextBid(Bid currentBid, Player bidder, Long playerSize) {
+        if (currentBid.getSuit() == null){
+            return new Bid(Suit.NINE, 1L);
+        }
+        if (currentBid.getAmount() >= playerSize * 5)
+            return getValidBids(currentBid, bidder, playerSize).get(0);
+        return new Bid(currentBid.getSuit(), currentBid.getAmount() + 1);
     }
 
 }

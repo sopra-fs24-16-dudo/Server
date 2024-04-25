@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
+import ch.uzh.ifi.hase.soprafs24.entity.Round;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
@@ -132,5 +133,14 @@ public class LobbyController {
     @ResponseBody
     public void gameStarter(@PathVariable Long lobbyId) {
         lobbyService.startGame(lobbyId);
+        lobbyService.startRound(lobbyId);
     }
+
+    @GetMapping("/lobby/{lobbyId}/round")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public String getRound(@PathVariable Long lobbyId) {
+        return lobbyService.getRound(lobbyId).toString();
+    }
+
 }

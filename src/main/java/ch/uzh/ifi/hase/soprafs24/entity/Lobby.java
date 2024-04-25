@@ -103,7 +103,45 @@ public class Lobby implements Serializable{
         return game.getPlayers();
     }
 
+    public void startRound(){
+        game.playRound();
+    }
 
+    public Round getRound(){
+        return game.getRound();
+    }
+
+    public Bid getCurrentBid(){
+        return game.getCurrentBid();
+    }
+
+    public Bid getNextBid(){
+        return game.getNextBid();
+    }
+
+    public List<Bid>getValidBids(){
+        return game.getValidBids();
+    }
+
+    public void placeBid(Bid bid){
+        game.placeBid(bid);
+    }
+
+    public void dudo(){
+        game.dudo();
+    }
+
+    public Player getWinner(){
+        return game.getWinner();
+    }
+
+    public boolean checkWinner(){
+        return game.checkWinner();
+    }
+
+    public Player getLoser(){
+        return game.getLoser();
+    }
 
 
 }

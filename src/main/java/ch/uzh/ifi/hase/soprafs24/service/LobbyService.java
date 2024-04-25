@@ -187,4 +187,14 @@ public class LobbyService {
         Lobby lobby = lobbyManager.getLobby(lobbyId);
         lobby.startGame();
     }
+
+    public void startRound(Long lobbyId) {
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        lobby.startRound();
+    }
+
+    public Round getRound(Long lobbyId) {
+        Lobby lobby = lobbyManager.getLobby(lobbyId);
+        return lobby.getRound();
+    }
 }

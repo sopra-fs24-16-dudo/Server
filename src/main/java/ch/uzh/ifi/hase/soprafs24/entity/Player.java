@@ -21,6 +21,7 @@ public class Player {
         ready = false;
     }
 
+
     public void roll() {
         hand.roll();
         rolled = true;
@@ -77,5 +78,6 @@ public class Player {
     public boolean hasRolled() {
         return rolled;
     }
+
 
 }

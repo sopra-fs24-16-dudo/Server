@@ -1,5 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
+import java.util.Map;
+import java.util.HashMap;
+
 public class Hand {
 
     //initialize with 5 dices
@@ -30,4 +33,5 @@ public class Hand {
         }
         return count;
     }
+
 }
