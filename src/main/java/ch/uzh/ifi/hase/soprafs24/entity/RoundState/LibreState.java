@@ -27,7 +27,7 @@ public class LibreState implements RoundState {
     public Long dudo(Bid currentBid, Map <Suit, Long> suitCounter, Player currentPlayer, Player lastPlayer) {
         Long bidAmount = currentBid.getAmount();
         Long totalAmount = suitCounter.get(currentBid.getSuit());
-        if (totalAmount <= bidAmount){
+        if (totalAmount >= bidAmount){
             return currentPlayer.getId();
         }
         return lastPlayer.getId();
