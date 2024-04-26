@@ -1,4 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
+import java.util.Objects;
 
 public class Bid {
     Suit suit;
@@ -31,5 +32,17 @@ public class Bid {
     @Override
     public String toString() {
         return amount + " " + suit;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Bid other = (Bid) obj;
+        return Objects.equals(suit, other.suit) && Objects.equals(amount, other.amount);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(suit, amount);
     }
 }
