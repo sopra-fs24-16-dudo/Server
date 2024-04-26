@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.*;
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -124,5 +125,47 @@ public class GameServiceTest {
 
         // Verify that there is a winner
         assertTrue(result);
+    }
+    @Test
+    void testRoundConstructor() {
+        User u1 = new User();
+        u1.setId(1L);
+        List<Player> players = new ArrayList<>();
+        Player startingPlayer = new Player(u1);
+        Round round = new Round(players, startingPlayer);
+
+        assertNotNull(round);
+        assertEquals(players, round.getPlayers());
+        assertEquals(startingPlayer, round.getCurrentPlayer());
+        assertNull(round.getLastPlayer());
+        //assertNull(round.getLoserId());
+        assertNotNull(round.getCurrentBid());
+        assertNotNull(round.getSuitCounter());
+    }
+    @Test
+    void testSetState() {
+        User u1 = new User();
+        u1.setId(1L);
+        List<Player> players = new ArrayList<>();
+        Player startingPlayer = new Player(u1);
+        Round round = new Round(players, startingPlayer);
+
+        round.setState(startingPlayer);
+
+        // Ensure that the state is set correctly based on the starting player's chips
+        // Add more assertions if needed
+    }
+    @Test
+    void testGetValidBids() {
+        User u1 = new User();
+        u1.setId(1L);
+        List<Player> players = new ArrayList<>();
+        Player startingPlayer = new Player(u1);
+        Round round = new Round(players, startingPlayer);
+        round.setCurrentBid(new Bid(Suit.ACE, 2L));
+
+        List<Bid> validBids = round.getValidBids();
+
+
     }
 }
