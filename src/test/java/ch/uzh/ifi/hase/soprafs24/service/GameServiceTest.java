@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Game;
+import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 public class GameServiceTest {
 
@@ -21,6 +28,7 @@ public class GameServiceTest {
     private User testUser;
 
     private User invalidUser;
+    private Lobby testLobby;
 
 
     @BeforeEach
@@ -33,8 +41,13 @@ public class GameServiceTest {
         testUser.setUsername("testUsername");
 
         invalidUser = null;
-    }
 
+        testLobby = new Lobby();
+        testLobby.setId(1L);
+
+        // Set up mock behavior for lobbyService
+        when(lobbyService.getLobbyById(anyLong())).thenReturn(testLobby);
+    }
     @Test
     public void createPlayer_validUser_success() {
         // Execute the method to test

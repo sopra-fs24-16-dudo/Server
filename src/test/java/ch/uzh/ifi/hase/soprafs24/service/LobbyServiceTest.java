@@ -296,6 +296,25 @@ public class LobbyServiceTest {
         //assertEquals(expectedBid, newdBid);
     }
 
+    @Test
+    public void testCheckWinner_OnePlayerLeft() {
+        // Prepare test data
+        Lobby lobby = new Lobby(1L);
+        Player player1 = mock(Player.class);
+        player1.setId(1L);
+        when(player1.isDisqualified()).thenReturn(false);
+
+        lobby.addPlayer(player1);
+        lobby.startGame();
+
+        // Execute the method to test
+        boolean result = lobby.checkWinner();
+        // Verify the result
+        assertTrue(result, "There should be only one player left");
+
+        assertNotNull(lobby.getWinner(), "The winner should  be set");
+    }
+
 
     /*@Test
     public void getRound_ReturnsCurrentRound() {

@@ -151,4 +151,7 @@ public class Lobby implements Serializable{
     }
 
 
+    public void setWinner(Player winner) {
+        game.setWinner(winner);
+    }
 }
