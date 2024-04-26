@@ -32,6 +32,7 @@ public class LobbyServiceTest {
     private Player testPlayer;
     private Lobby testLobby;
     private Map<Long, Lobby> lobbies;
+    private User testUser;
 
     @BeforeEach
     public void setup() {
@@ -44,6 +45,8 @@ public class LobbyServiceTest {
         testPlayer = new Player(testUser);
         testLobby = new Lobby(1L);
         testLobby.addPlayer(testPlayer);
+        testUser.setId(1L);
+        testUser.setUsername("testUsername");
 
         when(lobbyManager.generateLobbyId()).thenReturn(1L);
         when(lobbyManager.getLobby(1L)).thenReturn(testLobby);
@@ -52,7 +55,7 @@ public class LobbyServiceTest {
             lobbies.put(lobby.getId(), lobby);
             return null;
         }).when(lobbyManager).addLobby(any(Lobby.class));
-    }
+            }
 
     @Test
     public void createLobby_validInputs_success() {
@@ -129,4 +132,115 @@ public class LobbyServiceTest {
         lobbyService.startGame(1L);
         assertNotNull(testLobby.getGame());
     }
+    @Test
+    public void createPlayer_ReturnsPlayerWithCorrectUser() {
+        // Given
+        User testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testUsername");
+
+        Player resultPlayer = lobbyService.createPlayer(testUser);
+
+        // Then
+        assertNotNull(resultPlayer, "The created player should not be null");
+        assertEquals(testUser.getId(), resultPlayer.getId(), "The player should contain the user ID passed to createPlayer");
+        assertEquals(testUser.getUsername(), resultPlayer.getUsername(), "The player should contain the user Username passed to createPlayer");
+    }
+    /*@Test
+    public void getPlayersInGame_ReturnsCorrectPlayers() {
+        Lobby testLobby = lobbyService.createLobby(testPlayer);
+        List<Player> playersInGame = lobbyService.getPlayersInGame(testLobby.getId());
+        assertNotNull(playersInGame, "The returned list of players should not be null.");
+        assertEquals(2, playersInGame.size(), "The list should contain two players.");
+    }*/
+
+    @Test
+    public void getPlayersInLobby_ReturnsCorrectPlayers() {
+        Lobby testLobby = lobbyService.createLobby(testPlayer);
+        List<Player> playersInLobby = lobbyService.getPlayersInLobby(testLobby.getId());
+        assertNotNull(playersInLobby, "The returned list of players should not be null.");
+        assertEquals(1, playersInLobby.size(), "The list should contain one player.");
+    }
+
+    @Test
+    public void getPlayersInGame_WhenLobbyDoesNotExist_ThrowsException() {
+        when(lobbyManager.getLobby(90L)).thenThrow(new IllegalArgumentException("Lobby with id 90 does not exist."));
+        assertThrows(IllegalArgumentException.class, () -> lobbyService.getPlayersInGame(90L), "Should throw an exception when lobby does not exist.");
+    }
+
+    @Test
+    public void getPlayersInLobby_WhenLobbyDoesNotExist_ThrowsException() {
+        when(lobbyManager.getLobby(90L)).thenThrow(new IllegalArgumentException("Lobby with id 90 does not exist."));
+        assertThrows(IllegalArgumentException.class, () -> lobbyService.getPlayersInLobby(90L), "Should throw an exception when lobby does not exist.");
+    }
+    @Test
+    public void updatePlayerReadyStatus_TogglesReadyStatus() {
+        // Given
+        User testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testUsername");
+
+        Player player = lobbyService.createPlayer(testUser);
+        // Action
+        lobbyService.updatePlayerReadyStatus(player);
+
+        // Assertion
+        assertTrue(player.isReady(), "Player should be set to ready.");
+
+        // Toggling again to check the reverse case
+        lobbyService.updatePlayerReadyStatus(player);
+        assertFalse(player.isReady(), "Player should be set to not ready.");
+    }
+    @Test
+    public void getMessages_ReturnsCorrectMessages() {
+        // Given
+        Lobby lobby = lobbyService.createLobby(testPlayer);
+        lobby.getChat().addMessage("Hello");
+        lobby.getChat().addMessage("World");
+        when(lobbyManager.getLobby(lobby.getId())).thenReturn(lobby);
+
+        // Action
+        List<String> messages = lobbyService.getMessages(lobby.getId());
+
+        // Assertion
+        assertEquals(2, messages.size(), "Should return all messages.");
+        assertTrue(messages.contains("Hello") && messages.contains("World"), "Messages should match those added.");
+    }
+    @Test
+    public void getRules_ReturnsAllRules() {
+        List<String> RULES = List.of(
+                "Rule 1: Your Resources - You start with 5 dice and 2 chips.",
+                "Rule 2: Rolling the Dice - Every round begins with all players rolling their dice simultaneously.",
+                "Rule 3: Starting Player - The starting player is chosen randomly.",
+                "Rule 4: Your Turn - You have the chance to make the first bid.",
+                "Rule 5: Making a Bid - When it's your turn, announce the minimum number of dice showing a certain suit (e.g., 'five queens').",
+                "Rule 6: Raising the Stakes - You can raise the bid by increasing the quantity of dice, the die number, or both.",
+                "Rule 7: Wild Aces - Aces act as wild cards, except when you're in a 'Fijo' state.",
+                "Rule 8: Bidding with Aces - If you wish to bid aces, halve the quantity of dice, round down, and add one.",
+                "Rule 9: Challenging a Bid - If you don't believe the previous bid is correct, call 'dudo' to challenge it.",
+                "Rule 10: Consequences - If your challenge fails, you lose a chip; if it succeeds, your opponent loses a chip.",
+                "Rule 11: Fijo Round - When you reach zero chips, a 'Fijo' round begins, where aces are not wild.",
+                "Rule 12: Elimination - Lose a round with zero chips, and you're out of the game.",
+                "Rule 13: Victory - Be the last player standing to win the game: If you have two chips left, earn two points; if you have one or no chips left, earn one point."
+        );
+        // Action
+        List<String> rules = lobbyService.getRules();
+
+        // Assertion
+        assertNotNull(rules, "Rules list should not be null.");
+        assertFalse(rules.isEmpty(), "Rules list should not be empty.");
+        assertEquals(RULES, rules, "Returned rules should match the predefined rules list.");
+    }
+    /*@Test
+    public void startRound_StartsRoundSuccessfully() {
+        // Given
+        Lobby lobby = lobbyService.createLobby(testPlayer);
+        when(lobbyManager.getLobby(lobby.getId())).thenReturn(lobby);
+
+        // Action
+        lobbyService.startRound(lobby.getId());
+
+        // No exception means success. Checking if internal state could be asserted is dependent on implementation details not shown.
+        assertTrue(true, "Method should execute without errors.");
+    }*/
 }
