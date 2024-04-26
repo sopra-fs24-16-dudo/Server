@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
-import ch.uzh.ifi.hase.soprafs24.entity.Player;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.managers.LobbyManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +45,7 @@ public class LobbyServiceTest {
         testLobby.addPlayer(testPlayer);
         testUser.setId(1L);
         testUser.setUsername("testUsername");
+        testLobby.startGame();
 
         when(lobbyManager.generateLobbyId()).thenReturn(1L);
         when(lobbyManager.getLobby(1L)).thenReturn(testLobby);
@@ -146,13 +145,20 @@ public class LobbyServiceTest {
         assertEquals(testUser.getId(), resultPlayer.getId(), "The player should contain the user ID passed to createPlayer");
         assertEquals(testUser.getUsername(), resultPlayer.getUsername(), "The player should contain the user Username passed to createPlayer");
     }
-    /*@Test
+    @Test
     public void getPlayersInGame_ReturnsCorrectPlayers() {
-        Lobby testLobby = lobbyService.createLobby(testPlayer);
+        Lobby lobby = lobbyService.createLobby(testPlayer);
+        User u2 = new User();
+        u2.setId(2L);
+        u2.setUsername("testUsername");
+
+        Player p = lobbyService.createPlayer(u2);
+        lobby.addPlayer(p);
+        lobby.startGame();
         List<Player> playersInGame = lobbyService.getPlayersInGame(testLobby.getId());
         assertNotNull(playersInGame, "The returned list of players should not be null.");
         assertEquals(2, playersInGame.size(), "The list should contain two players.");
-    }*/
+    }
 
     @Test
     public void getPlayersInLobby_ReturnsCorrectPlayers() {
@@ -231,10 +237,11 @@ public class LobbyServiceTest {
         assertFalse(rules.isEmpty(), "Rules list should not be empty.");
         assertEquals(RULES, rules, "Returned rules should match the predefined rules list.");
     }
-    /*@Test
+    @Test
     public void startRound_StartsRoundSuccessfully() {
         // Given
         Lobby lobby = lobbyService.createLobby(testPlayer);
+        lobby.startGame();
         when(lobbyManager.getLobby(lobby.getId())).thenReturn(lobby);
 
         // Action
@@ -242,5 +249,17 @@ public class LobbyServiceTest {
 
         // No exception means success. Checking if internal state could be asserted is dependent on implementation details not shown.
         assertTrue(true, "Method should execute without errors.");
+    }
+    /*@Test
+    public void getRound_ReturnsCurrentRound() {
+        Lobby lobby = lobbyService.createLobby(testPlayer);
+        lobby.startGame();
+        lobby.startRound();
+        when(lobby.getRound()).thenReturn(lobby.getRound());
+
+        Round currentRound = lobbyService.getRound(1L);
+
+        assertSame(mockRound, currentRound, "Should return the current round of the game.");
     }*/
+    
 }
