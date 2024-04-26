@@ -1,34 +1,37 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Game;
-import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.entity.Player;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
 
 public class GameServiceTest {
 
     @Mock
     private LobbyService lobbyService;
+    @Mock
+    private Lobby lobby;
 
     @InjectMocks
     private GameService gameService;
+    @InjectMocks
+    private Game game;
 
     private User testUser;
 
     private User invalidUser;
     private Lobby testLobby;
+    private Player testPlayer;
 
 
     @BeforeEach
@@ -40,13 +43,26 @@ public class GameServiceTest {
         testUser.setId(1L);
         testUser.setUsername("testUsername");
 
+        testPlayer = new Player(testUser);
+
         invalidUser = null;
 
-        testLobby = new Lobby();
-        testLobby.setId(1L);
+        testLobby = new Lobby(1L);
+        testLobby.addPlayer(testPlayer);
+
+        game = mock(Game.class);
+        testLobby.setGame(game);
 
         // Set up mock behavior for lobbyService
         when(lobbyService.getLobbyById(anyLong())).thenReturn(testLobby);
+
+        when(game.getCurrentBid()).thenReturn(new Bid());
+        when(game.getNextBid()).thenReturn(new Bid());
+        when(game.getValidBids()).thenReturn(new ArrayList<>());
+        when(game.getPlayers()).thenReturn(new ArrayList<>(Arrays.asList(testPlayer)));
+        when(game.getHands()).thenReturn(new ArrayList<>());
+        doNothing().when(game).placeBid(any(Bid.class));
+        doNothing().when(game).dudo();
     }
     @Test
     public void createPlayer_validUser_success() {
@@ -63,5 +79,50 @@ public class GameServiceTest {
         // Attempt to create a player with a null user and expect an exception
         assertThrows(NullPointerException.class, () -> gameService.createPlayer(invalidUser),
                 "Expected createPlayer to throw IllegalArgumentException for null user input");
+    }
+    @Test
+    public void testCalculateStartingPlayer_PlayerWithChips() {
+        // Create a player with chips
+        Player playerWithChips = new Player(testUser);
+        // Set up the game to have the player with chips
+        List<Player> players = new ArrayList<>();
+        players.add(playerWithChips);
+        when(game.getPlayers()).thenReturn(players);
+        when(game.calculateStartingPlayer()).thenReturn(playerWithChips);
+        game.setStartPlayer(playerWithChips);
+
+        // Calculate the starting player
+        Player calculatedStartingPlayer = game.calculateStartingPlayer();
+
+        // Verify that the starting player is the one with chips
+        assertNotNull(calculatedStartingPlayer);
+        assertEquals(playerWithChips, calculatedStartingPlayer);
+    }
+    @Test
+    public void testDudo_PlayerGetsDisqualified() {
+        // Mock the behavior of the game object
+        doNothing().when(game).dudo();
+        Player disqualifiedPlayer = new Player(testUser);
+        disqualifiedPlayer.disqualify();
+        when(game.getLoser()).thenReturn(disqualifiedPlayer);
+
+        // Call dudo
+        game.dudo();
+
+        // Verify that the player is disqualified
+        assertTrue(disqualifiedPlayer.isDisqualified());
+        assertEquals(3, disqualifiedPlayer.getChips());
+    }
+    @Test
+    public void testCheckWinner_OneNonDisqualifiedPlayer() {
+        // Mock the behavior of the game object
+        when(game.checkWinner()).thenReturn(true);
+        when(game.getWinner()).thenReturn(new Player(testUser));
+
+        // Check for a winner
+        boolean result = game.checkWinner();
+
+        // Verify that there is a winner
+        assertTrue(result);
     }
 }

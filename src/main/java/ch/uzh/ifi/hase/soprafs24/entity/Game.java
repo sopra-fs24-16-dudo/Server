@@ -67,7 +67,7 @@ public class Game implements Serializable {
     // }
     // }
 
-    private Player calculateStartingPlayer() {
+    public Player calculateStartingPlayer() {
         if (startingPlayer.getChips() > 0) {
             return startingPlayer;
         }
@@ -181,5 +181,8 @@ public class Game implements Serializable {
         if (players.get(round.getLoserId()).getChips() == 0) {
             players.get(round.getLoserId()).disqualify();
         }
+    }
+    public void setPlayers(LinkedHashMap<Long, Player> players) {
+        this.players = players;
     }
 }

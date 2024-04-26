@@ -46,7 +46,9 @@ public class Player {
     public int getChips() {
         return chips;
     }
-
+    public void setChips(int chips) {
+        this.chips = chips;
+    }
     public long getId() {
         return id;
     }
