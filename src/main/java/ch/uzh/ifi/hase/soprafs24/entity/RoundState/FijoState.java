@@ -14,23 +14,23 @@ public class FijoState implements RoundState {
 
     @Override
     public Bid placeBid(Bid bid, List<Bid> validBids) {
-        if (!validBids.contains(bid)){
-            throw new IllegalArgumentException("Invalid bid");
+        for (Bid validBid : validBids) {
+            if (bid.getSuit() == validBid.getSuit() && bid.getAmount() == validBid.getAmount()){
+                return bid;
+            }
         }
-        return bid;
+        throw new IllegalArgumentException("Invalid bid");
     }
 
     @Override
     public Long dudo(Bid currentBid, Map <Suit, Long> suitCounter, Player currentPlayer, Player lastPlayer) {
         Long bidAmount = currentBid.getAmount();
         Long totalAmount = suitCounter.get(currentBid.getSuit());
-        if (totalAmount <= bidAmount){
+        if (totalAmount >= bidAmount){
             return currentPlayer.getId();
         }
         return lastPlayer.getId();
     }
-
-
 
     @Override
     public List<Bid> getValidBids(Bid currentBid, Player bidder, Long playerSize) {

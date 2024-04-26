@@ -27,8 +27,8 @@ public class Player {
         rolled = true;
     }
 
-    public void setDisqualified(boolean disqualified) {
-        this.disqualified = disqualified;
+    public void disqualify() {
+        this.disqualified = true;
     }
 
     public boolean isDisqualified() {
@@ -77,6 +77,13 @@ public class Player {
 
     public boolean hasRolled() {
         return rolled;
+    }
+
+    public void resetChips() {
+        this.chips = 3;
+    }
+    public void resetDisqualified() {
+        this.disqualified = false;
     }
 
 

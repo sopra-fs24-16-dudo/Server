@@ -1,10 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ArrayList;
 
 
 public class Game implements Serializable {
@@ -22,12 +21,17 @@ public class Game implements Serializable {
     public Game(Lobby lobby) {
         lobbyId = lobby.getId();
         players = lobby.getPlayers();
+        for (Player player : players.values()) {
+            player.resetChips();
+            player.resetDisqualified();
+            player.setReady(false);
+        }
         isOpen = true;
         winner = null;
     }
 
-    public void playRound (){
-        if (startingPlayer == null){
+    public void playRound() {
+        if (startingPlayer == null) {
             startingPlayer = getPlayers().get(0);
         }
         startingPlayer = calculateStartingPlayer();
@@ -35,39 +39,39 @@ public class Game implements Serializable {
     }
 
 
-    public boolean checkWinner(){
+    public boolean checkWinner() {
         int notDisqualifiedCount = 0;
         for (Player player : players.values()) {
             if (!player.isDisqualified()) {
                 notDisqualifiedCount++;
             }
         }
+        if (notDisqualifiedCount == 1) {
+            for (Player player : players.values()) {
+                if (!player.isDisqualified()) {
+                    setWinner(player);
+                }
+            }
+        }
         return notDisqualifiedCount == 1;
     }
 
-    private void endGame(){
-        //set winner
-       // for (Player player : players) {
-       //     if (!player.isDisqualified()) {
-        //        winner = player;
-        //    }
-       // }
-    }
 
-  //  public void startGame(){
-        //set starting player
-   //     setStartingPlayer(players.get(0));
-        //while (!checkWinner()) {
-         //   Player loser = playRound(players.values(), startingPlayer);
-         //   subtractChips(loser);
-         //   setStartingPlayer(loser);
-       // }
-   // }
+    //  public void startGame(){
+    //set starting player
+    //     setStartingPlayer(players.get(0));
+    //while (!checkWinner()) {
+    //   Player loser = playRound(players.values(), startingPlayer);
+    //   subtractChips(loser);
+    //   setStartingPlayer(loser);
+    // }
+    // }
 
-    private Player calculateStartingPlayer(){
+    private Player calculateStartingPlayer() {
         if (startingPlayer.getChips() > 0) {
             return startingPlayer;
-        } else {
+        }
+        else {
             // Get the list of players
             List<Player> playerList = getPlayers();
             // Find the index of the current starting player
@@ -90,24 +94,28 @@ public class Game implements Serializable {
         return null;
     }
 
-   // private void subtractChips(Player loser){
-     //   loser.subtractChip();
-  //  }
+    // private void subtractChips(Player loser){
+    //   loser.subtractChip();
+    //  }
 
-    private void setStartingPlayer(Player player){
+    public Player getStartingPlayer() {
+        return startingPlayer;
+    }
+
+    private void setStartingPlayer(Player player) {
         //TODO if a player is disqualified, the next player should start
         startingPlayer = player;
     }
 
-    public Player getStartingPlayer(){
-        return startingPlayer;
-    }
-
-    public Player getWinner(){
+    public Player getWinner() {
         return winner;
     }
 
-    public Player getLoser(){
+    public void setWinner(Player player) {
+        winner = player;
+    }
+
+    public Player getLoser() {
         Player player = null;
         for (Player p : players.values()) {
             if (p.getId() == (round.getLoserId())) {
@@ -121,23 +129,23 @@ public class Game implements Serializable {
         return lobbyId;
     }
 
-    public void close(){
+    public void close() {
         isOpen = false;
     }
 
-    public void open(){
+    public void open() {
         isOpen = true;
     }
 
-    public boolean isOpen(){
+    public boolean isOpen() {
         return isOpen;
     }
 
-    public List<Player> getPlayers(){
+    public List<Player> getPlayers() {
         return new ArrayList<>(players.values());
     }
 
-    public Round getRound(){
+    public Round getRound() {
         return round;
     }
 
@@ -153,17 +161,20 @@ public class Game implements Serializable {
         return round.getValidBids();
     }
 
-    public void placeBid(Bid bid){
+    public void placeBid(Bid bid) {
         round.placeBid(bid);
     }
 
-    public List<Hand> getHands(){
+    public List<Hand> getHands() {
         return round.getHands();
     }
 
-    public void dudo(){
+    public void dudo() {
         round.dudo();
         startingPlayer = players.get(round.getLoserId());
         players.get(round.getLoserId()).subtractChip();
+        if (players.get(round.getLoserId()).getChips() == 0) {
+            players.get(round.getLoserId()).disqualify();
+        }
     }
 }

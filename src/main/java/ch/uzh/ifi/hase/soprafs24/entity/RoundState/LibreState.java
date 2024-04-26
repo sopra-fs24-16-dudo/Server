@@ -49,10 +49,16 @@ public class LibreState implements RoundState {
         for (Suit suit : Suit.values()) {
             for (Long value = 1L; value <= maxAmount; value++) {
                 Bid newBid = new Bid(suit, value);
-                if (newBid.getAmount() > currentBid.getAmount() ||
+                if (currentBid.getSuit() == Suit.ACE) {
+                    if (newBid.getAmount() >= currentBid.getAmount() *2 ||
+                            (newBid.getSuit() == Suit.ACE && newBid.getAmount() > currentBid.getAmount())
+                        )
+                        validBids.add(newBid);
+                }
+                else if (newBid.getAmount() > currentBid.getAmount() ||
                         (newBid.getAmount() == currentBid.getAmount() && newBid.getSuit().compareTo(currentBid.getSuit()) > 0) ||
                         (currentBid.getSuit() == Suit.ACE && newBid.getAmount() >= currentBid.getAmount() * 2) ||
-                        (newBid.getSuit() == Suit.ACE && newBid.getAmount() == currentBid.getAmount() / 2 + 1)) {
+                        (newBid.getSuit() == Suit.ACE && newBid.getAmount() >= currentBid.getAmount() / 2 + 1)) {
                     validBids.add(newBid);
                 }
             }

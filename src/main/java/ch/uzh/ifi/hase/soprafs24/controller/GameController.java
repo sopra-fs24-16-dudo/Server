@@ -72,9 +72,9 @@ public class GameController {
     @GetMapping("/games/validBids/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getValidBids(@PathVariable Long lobbyId) {
+    public List<Bid> getValidBids(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        return lobby.getValidBids().toString();
+        return lobby.getValidBids();
     }
 
     @PostMapping("/games/placeBid/{lobbyId}")
