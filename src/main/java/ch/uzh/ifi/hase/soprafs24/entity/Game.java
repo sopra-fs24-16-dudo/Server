@@ -170,4 +170,8 @@ public class Game implements Serializable {
         startingPlayer = players.get(round.getLoserId());
         players.get(round.getLoserId()).subtractChip();
     }
+
+    public void setCurrentBid(Bid expectedBid) {
+        this.round.getCurrentBid();
+    }
 }

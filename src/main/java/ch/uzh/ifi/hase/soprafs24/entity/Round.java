@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,9 @@ public class Round {
         }
     }
 
+    public List<Player> getPlayers() {
+        return this.players;
+    }
     public Long getLoserId(){
         return loser.getId();
     }
@@ -62,6 +66,7 @@ public class Round {
     public Bid getCurrentBid() {
         return currentBid;
     }
+    public void setCurrentBid(Bid bid) {this.currentBid = bid;}
 
     public Bid getNextBid(){
         return state.getNextBid(currentBid, currentPlayer, (long) players.size());
@@ -120,7 +125,4 @@ public class Round {
                 ", currentBid=" + currentBid +
                 '}';
     }
-
-
-
 }

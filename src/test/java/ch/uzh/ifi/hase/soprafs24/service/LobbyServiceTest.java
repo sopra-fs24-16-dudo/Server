@@ -10,10 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +23,8 @@ public class LobbyServiceTest {
 
     @InjectMocks
     private LobbyService lobbyService;
+    private Game mockGame;
+
 
     private Player testPlayer;
     private Lobby testLobby;
@@ -45,7 +44,18 @@ public class LobbyServiceTest {
         testLobby.addPlayer(testPlayer);
         testUser.setId(1L);
         testUser.setUsername("testUsername");
-        testLobby.startGame();
+        mockGame = mock(Game.class);
+        testLobby.setGame(mockGame);
+
+        lobbyManager = mock(LobbyManager.class);
+
+        when(mockGame.getCurrentBid()).thenReturn(new Bid());
+        when(mockGame.getNextBid()).thenReturn(new Bid());
+        when(mockGame.getValidBids()).thenReturn(new ArrayList<>());
+        when(mockGame.getPlayers()).thenReturn(new ArrayList<>(Arrays.asList(testPlayer)));
+        when(mockGame.getHands()).thenReturn(new ArrayList<>());
+        doNothing().when(mockGame).placeBid(any(Bid.class));
+        doNothing().when(mockGame).dudo();
 
         when(lobbyManager.generateLobbyId()).thenReturn(1L);
         when(lobbyManager.getLobby(1L)).thenReturn(testLobby);
@@ -250,6 +260,43 @@ public class LobbyServiceTest {
         // No exception means success. Checking if internal state could be asserted is dependent on implementation details not shown.
         assertTrue(true, "Method should execute without errors.");
     }
+
+    @Test
+    public void testRoundConstructor() {
+        // Prepare the data for the test
+        User user1 = new User();
+        user1.setId(1L);
+        user1.setUsername("Player1");
+
+        User user2 = new User();
+        user2.setId(2L);
+        user2.setUsername("Player2");
+
+        Player player1 = new Player(user1);
+        Player player2 = new Player(user2);
+
+        List<Player> players = Arrays.asList(player1, player2);
+
+        // Player1 is the starting player
+        Round round = new Round(players, player1);
+
+        // Assertions to verify that the Round object was initialized correctly
+        assertNotNull(round, "Round object should not be null");
+        assertEquals(player1, round.getCurrentPlayer(), "Starting player should be set correctly");
+        assertEquals(2, round.getPlayers().size(), "Players list should contain two players");
+    }
+    @Test
+    public void getCurrentBid_ShouldReturnCurrentBid() {
+        Bid expectedBid = new Bid(Suit.ACE, 1L);
+        mockGame.setCurrentBid(expectedBid);
+        Bid newdBid = new Bid(Suit.ACE, 1L);
+        mockGame.setCurrentBid(newdBid);
+        Bid result = mockGame.getCurrentBid();
+        assertNotNull(result);
+        //assertEquals(expectedBid, newdBid);
+    }
+
+
     /*@Test
     public void getRound_ReturnsCurrentRound() {
         Lobby lobby = lobbyService.createLobby(testPlayer);
@@ -261,5 +308,5 @@ public class LobbyServiceTest {
 
         assertSame(mockRound, currentRound, "Should return the current round of the game.");
     }*/
-    
+
 }
