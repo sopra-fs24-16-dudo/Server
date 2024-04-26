@@ -74,7 +74,7 @@ public class GameControllerTest {
         // Setup
         User u = new User();
         u.setId(1L);
-        Player realPlayer = new Player(u);  // Assuming a no-arg constructor or appropriate setup
+        Player realPlayer = new Player(u);
         realPlayer.setId(1L);
         realPlayer.setUsername("testUser");
 
@@ -86,7 +86,6 @@ public class GameControllerTest {
                         .content(objectMapper.writeValueAsString(1L)))
                 .andExpect(status().isOk());
 
-        // Assertions and verifications can focus on the outcomes or state changes if applicable
     }
 
     @Test
