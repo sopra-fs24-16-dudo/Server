@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
+import java.util.Collection;
 
 import java.util.List;
 import java.util.Map;
@@ -109,6 +110,12 @@ public class Round {
         }
         return hands;
     }
+
+    public List<Player> getPlayers() {
+        return this.players;
+    }
+
+    public void setCurrentBid(Bid bid) {this.currentBid = bid;}
 
     @Override
     public String toString() {

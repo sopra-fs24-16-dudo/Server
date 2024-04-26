@@ -56,6 +56,9 @@ public class Lobby implements Serializable{
         return this.game;
     }
 
+    public void setGame(Game game) {
+        this.game = game;
+    }
 
     private Player convertUserToPlayer(User user) {
         Player player = new Player(user);

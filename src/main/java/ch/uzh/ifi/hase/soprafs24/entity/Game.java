@@ -102,14 +102,19 @@ public class Game implements Serializable {
         return startingPlayer;
     }
 
-    private void setStartingPlayer(Player player) {
+    public void setStartPlayer(Player player){
         //TODO if a player is disqualified, the next player should start
         startingPlayer = player;
+    }
+
+    public void setCurrentBid(Bid expectedBid) {
+        this.round.getCurrentBid();
     }
 
     public Player getWinner() {
         return winner;
     }
+
 
     public void setWinner(Player player) {
         winner = player;

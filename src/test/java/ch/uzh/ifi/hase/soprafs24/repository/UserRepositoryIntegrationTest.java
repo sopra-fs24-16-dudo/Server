@@ -14,9 +14,9 @@ import java.time.LocalDate;
 @DataJpaTest
 public class UserRepositoryIntegrationTest {
 
-  @Autowired
-  private TestEntityManager entityManager;
+    @Autowired
+    private TestEntityManager entityManager;
 
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 }
