@@ -93,14 +93,6 @@ public class DTOMapperTest {
         // Assertions to check the mapping and the structure of the resulting DTO
         assertNotNull(lobbyGetDTO, "LobbyGetDTO should not be null");
         assertEquals(123L, lobbyGetDTO.getId(), "Lobby IDs should match");
-
-        // Checking users inside the DTO
-        //assertNotNull(lobbyGetDTO.getUsers(), "Users array should not be null");
-        //assertEquals(2, lobbyGetDTO.getUsers().length, "There should be two users in the DTO");
-
-        // Checking individual user IDs
-        //assertEquals(user1.getId(), lobbyGetDTO.getUsers()[0].getId(), "User IDs should match for the first user");
-        //assertEquals(user2.getId(), lobbyGetDTO.getUsers()[1].getId(), "User IDs should match for the second user");
     }
     @Test
     public void testGetVoiceChannel_fromVoiceChannel_toVoiceChannelGetDTO_success() {

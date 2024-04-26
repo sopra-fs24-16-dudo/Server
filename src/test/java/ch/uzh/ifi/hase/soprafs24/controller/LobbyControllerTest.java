@@ -58,8 +58,7 @@ public class LobbyControllerTest {
         mockMvc.perform(get("/lobbies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is((int) lobby.getId())))
-                .andDo(print());
+                .andExpect(jsonPath("$[0].id", is((int) lobby.getId())));
     }
 
     @Test
@@ -95,7 +94,7 @@ public class LobbyControllerTest {
     @Test
     public void whenGetAllLobbies_thenReturnLobbiesList() throws Exception {
         // Given
-        Lobby lobby1 = new Lobby(1L); // Assuming constructors or setters to set relevant fields
+        Lobby lobby1 = new Lobby(1L);
         Lobby lobby2 = new Lobby(2L);
         List<Lobby> lobbies = List.of(lobby1, lobby2);
         given(lobbyService.getAllLobbies()).willReturn(lobbies);
@@ -111,7 +110,7 @@ public class LobbyControllerTest {
     @Test
     public void whenCreateLobby_thenReturnLobby() throws Exception {
         // Given
-        User user = new User(); // Set necessary user attributes
+        User user = new User();
         user.setId(1L);
         Player player = new Player(user);
         Lobby lobby = new Lobby(3L);

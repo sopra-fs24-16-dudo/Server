@@ -74,7 +74,6 @@ public class LobbyServiceTest {
         assertNotNull(createdLobby);
         assertEquals(1L, createdLobby.getId());
         assertTrue(createdLobby.getPlayers().containsValue(testPlayer));
-        //verify(lobbyManager, times(1)).addLobby(any(Lobby.class));
     }
 
     @Test
@@ -85,7 +84,6 @@ public class LobbyServiceTest {
         lobbyService.addPlayer(createdLobby.getId(), testPlayer);
 
         assertTrue(createdLobby.getPlayers().containsValue(testPlayer));
-        //verify(lobbyManager, times(1)).getLobby(1L);
     }
 
     @Test
@@ -110,7 +108,6 @@ public class LobbyServiceTest {
         lobbyService.removePlayer(testLobby, testPlayer.getId());
 
         assertFalse(testLobby.getPlayers().containsValue(testPlayer));
-        //verify(lobbyManager, times(1)).removeLobby(testLobby.getId());
     }
 
     @Test
@@ -293,7 +290,6 @@ public class LobbyServiceTest {
         mockGame.setCurrentBid(newdBid);
         Bid result = mockGame.getCurrentBid();
         assertNotNull(result);
-        //assertEquals(expectedBid, newdBid);
     }
 
     @Test

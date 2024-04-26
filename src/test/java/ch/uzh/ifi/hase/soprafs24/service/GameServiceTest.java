@@ -138,7 +138,6 @@ public class GameServiceTest {
         assertEquals(players, round.getPlayers());
         assertEquals(startingPlayer, round.getCurrentPlayer());
         assertNull(round.getLastPlayer());
-        //assertNull(round.getLoserId());
         assertNotNull(round.getCurrentBid());
         assertNotNull(round.getSuitCounter());
     }
