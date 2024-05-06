@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 
 @RestController
@@ -22,10 +23,12 @@ public class GameController {
 
     private final LobbyService lobbyService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    GameController(LobbyService lobbyService, UserService userService) {
+    GameController(LobbyService lobbyService, UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.lobbyService = lobbyService;
         this.userService = userService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping("/games/players/{lobbyId}")
@@ -33,6 +36,8 @@ public class GameController {
     @ResponseBody
     public List<Player> getPlayers(@PathVariable Long lobbyId) {
         List<Player> players = lobbyService.getPlayersInLobby(lobbyId);
+        //Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        //messagingTemplate.convertAndSend("/topic/game/player/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         if (players != null){
             return players;
         }
@@ -58,6 +63,7 @@ public class GameController {
     @ResponseBody
     public String getBid(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        //messagingTemplate.convertAndSend("/topic/game/currentbid/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby.getCurrentBid().toString();
     }
 
@@ -66,6 +72,7 @@ public class GameController {
     @ResponseBody
     public String getNextBid(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        //messagingTemplate.convertAndSend("/topic/game/nextbid/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby.getNextBid().toString();
     }
 
@@ -86,6 +93,7 @@ public class GameController {
         bid = bid.substring(1, bid.length() - 1);
         Bid newBid = new Bid(bid);
         lobby.placeBid(newBid);
+        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
 
     @GetMapping("/games/currentPlayer/{lobbyId}")
@@ -112,6 +120,7 @@ public class GameController {
     public void dudo(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobby.dudo();
+        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
 
     @GetMapping("/games/winner/{lobbyId}")
@@ -128,6 +137,7 @@ public class GameController {
     @ResponseBody
     public boolean checkWinner(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby.checkWinner();
     }
 
@@ -145,6 +155,7 @@ public class GameController {
     @ResponseBody
     public void startRound(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         lobby.startRound();
     }
 
@@ -163,4 +174,16 @@ public class GameController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         return lobby.getHands().toString();
     }
+    @PutMapping("/games/end/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void endGame(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        Game game = lobby.getGame();
+
+        game.updatePlayersAfterGame();
+        messagingTemplate.convertAndSend("/topic/end/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+
+    }
+
 }

@@ -297,6 +297,8 @@ public class LobbyServiceTest {
         // Prepare test data
         Lobby lobby = new Lobby(1L);
         Player player1 = mock(Player.class);
+        User user = new User();
+        when(player1.getUser()).thenReturn(user);
         player1.setId(1L);
         when(player1.isDisqualified()).thenReturn(false);
 

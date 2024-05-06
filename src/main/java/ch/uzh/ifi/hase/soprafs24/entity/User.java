@@ -46,6 +46,15 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
+  @Column(nullable = false)
+  private int gamesPlayed;
+
+  @Column(nullable = false)
+  private int gamesWon;
+
+  @Column(nullable = false)
+  private double winRatio;
+
     @ManyToMany
     @JoinTable(
             name = "user_voice_channel",
@@ -104,14 +113,32 @@ public class User implements Serializable {
   public void setToken(String token) {
     this.token = token;
   }
-
   public UserStatus getStatus() {
-    return status;
+      return status;
   }
 
   public void setStatus(UserStatus status) {
     this.status = status;
   }
 
- 
+  public int getGamesPlayed() {
+      return gamesPlayed;
+  }
+  public void incrementGamesPlayed() { this.gamesPlayed++; }
+
+  public int getGamesWon() {
+      return gamesWon;
+  }
+
+  public void incrementGamesWon() { this.gamesWon++; }
+
+  public void setWinRatio(double ratio) {
+      this.winRatio = ratio;
+  }
+  public double getWinRatio() {
+     if (gamesPlayed == 0) {
+        return 0.0;
+     }
+     return (double) gamesWon / gamesPlayed * 100;
+  }
 }

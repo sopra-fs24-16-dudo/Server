@@ -1,10 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.Player;
 
 public class LobbyGetDTO {
 
     private Long id;
-    private User[] users;
+    private PlayerGetDTO[] players;
 
     //setter and getter
     public Long getId() {
@@ -15,12 +15,11 @@ public class LobbyGetDTO {
         this.id = id;
     }
 
-    public User[] getUsers() {
-        return users;
+    public PlayerGetDTO[] getPlayers() {
+        return players;
     }
 
-    public void setUsers(User[] users) {
-        this.users = users;
+    public void setPlayers(PlayerGetDTO[] players) {
+        this.players = players;
     }
-
 }

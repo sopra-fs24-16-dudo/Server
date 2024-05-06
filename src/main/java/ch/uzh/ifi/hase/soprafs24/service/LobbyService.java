@@ -2,6 +2,9 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.managers.LobbyManager;
+//import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
+//import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 
 @Service
 @Transactional
@@ -38,10 +43,13 @@ public class LobbyService {
 
     private final LobbyManager lobbyManager;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     private VoiceChannelService voiceChannelService;
 
 
-    public LobbyService() {
+    public LobbyService(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
         this.lobbyManager = new LobbyManager();
         this.voiceChannelService = voiceChannelService;
     }
@@ -72,14 +80,15 @@ public class LobbyService {
     }
 
     public Lobby addPlayer(Long lobbyId, Player player) {
-        Lobby updatedlobby = lobbyManager.getLobby(lobbyId);
-        if (playerInLobby(lobbyId, player)){
-            return updatedlobby;
+        Lobby updatedLobby = lobbyManager.getLobby(lobbyId);
+        if (playerInLobby(lobbyId, player)) {
+            return updatedLobby;
         }
         checkIfLobbyFull(lobbyId);
-        updatedlobby.addPlayer(player);
-        log.debug("Added user to Lobby: {}", updatedlobby.getId());
-        return updatedlobby;
+        updatedLobby.addPlayer(player);
+        log.debug("Added user to Lobby: {}", updatedLobby.getId());
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby));
+        return updatedLobby;
     }
 
     //check if lobby with id is full (max. 6 users)
@@ -117,6 +126,7 @@ public class LobbyService {
             deleteLobby(lobby.getId());
             return null;
         }
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobby.getId(), DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby;
     }
 
@@ -197,4 +207,16 @@ public class LobbyService {
         Lobby lobby = lobbyManager.getLobby(lobbyId);
         return lobby.getRound();
     }
+    /*public void updateLobby(Lobby updatedLobby) {
+        Long lobbyId = updatedLobby.getId();
+        if (!lobbyManager.getLobbies().contains(updatedLobby)) {
+            throw new IllegalArgumentException("Lobby with id " + lobbyId + " does not exist.");
+        }
+
+        lobbyManager.updateLobby(updatedLobby, lobbyId);
+    }
+
+     */
+
+
 }

@@ -150,7 +150,6 @@ public class Lobby implements Serializable{
         return game.getHands();
     }
 
-
     public void setWinner(Player winner) {
         game.setWinner(winner);
     }

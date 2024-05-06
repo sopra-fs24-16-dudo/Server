@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 public class Player {
 
+    private User user;
     private Hand hand;
     private int chips;
     private boolean disqualified;
@@ -10,7 +11,6 @@ public class Player {
 
     private boolean ready;
     private boolean rolled;
-
     public Player(User user) {
         this.hand = new Hand();
         rolled = false;
@@ -21,6 +21,12 @@ public class Player {
         ready = false;
     }
 
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public void roll() {
         hand.roll();

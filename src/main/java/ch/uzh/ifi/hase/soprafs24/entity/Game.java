@@ -41,21 +41,41 @@ public class Game implements Serializable {
 
     public boolean checkWinner() {
         int notDisqualifiedCount = 0;
+        Player winner = null;
+
         for (Player player : players.values()) {
             if (!player.isDisqualified()) {
                 notDisqualifiedCount++;
-            }
-        }
-        if (notDisqualifiedCount == 1) {
-            for (Player player : players.values()) {
-                if (!player.isDisqualified()) {
-                    setWinner(player);
+                if (winner == null) {
+                    winner = player;
+                } else {
+                    winner = null;
+                    break;
                 }
             }
         }
-        return notDisqualifiedCount == 1;
+
+        if (notDisqualifiedCount == 1 && winner != null) {
+            setWinner(winner);
+            return true;
+        }
+
+        return false;
     }
 
+    public void updatePlayersAfterGame() {
+        for (Player player : players.values()) {
+            User user = player.getUser();
+            if (user != null) {
+                user.incrementGamesPlayed();
+                if (player == winner) {
+                    user.incrementGamesWon();
+                }
+                double winRatio = user.getWinRatio();
+                user.setWinRatio(winRatio);
+            }
+        }
+    }
 
     //  public void startGame(){
     //set starting player

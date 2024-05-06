@@ -1,11 +1,14 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.VoiceChannel;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
+import java.util.LinkedHashMap;
 
 /**
  * DTOMapper
@@ -32,6 +35,9 @@ public interface DTOMapper {
   @Mapping(source = "username", target = "username")
   @Mapping(source = "status", target = "status")
   @Mapping(source = "creationDate", target = "creationDate")
+  @Mapping(source = "gamesPlayed", target = "gamesPlayed")
+  @Mapping(source = "gamesWon", target = "gamesWon")
+  @Mapping(source = "winRatio", target = "winRatio")
   UserGetDTO convertEntityToUserGetDTO(User user);
 
   @Mapping(source = "id", target = "id")
@@ -41,10 +47,22 @@ public interface DTOMapper {
   //@Mapping(source = "users", target = "users")
   LobbyGetDTO convertEntityToLobbyGetDTO(Lobby lobby);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "lobby.id", target = "lobbyId")
-    VoiceChannelGetDTO convertEntityToVoiceChannelGetDTO(VoiceChannel voiceChannel);
+  default PlayerGetDTO[] mapPlayers(LinkedHashMap<Long, Player> players) {
+      if (players == null) {
+          return null;
+      }
 
-    @Mapping(source = "lobbyId", target = "lobby.id")
-    VoiceChannel convertVoiceChannelPostDTOtoEntity(VoiceChannelPostDTO voiceChannelPostDTO);
+      return players.values().stream()
+              .map(this::convertEntityToPlayerGetDTO)
+              .toArray(PlayerGetDTO[]::new);
+  }
+
+    PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "lobby.id", target = "lobbyId")
+  VoiceChannelGetDTO convertEntityToVoiceChannelGetDTO(VoiceChannel voiceChannel);
+
+  @Mapping(source = "lobbyId", target = "lobby.id")
+  VoiceChannel convertVoiceChannelPostDTOtoEntity(VoiceChannelPostDTO voiceChannelPostDTO);
 }

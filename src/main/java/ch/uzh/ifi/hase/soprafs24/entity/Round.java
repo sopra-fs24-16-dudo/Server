@@ -14,7 +14,6 @@ public class Round {
     private List<Player> players;
     private Player currentPlayer;
     private Player lastPlayer;
-
     private Player loser;
     private Map<Suit, Long> SuitCounter;
     private Bid currentBid;

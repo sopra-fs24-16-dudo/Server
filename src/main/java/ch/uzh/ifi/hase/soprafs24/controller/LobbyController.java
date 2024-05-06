@@ -5,14 +5,18 @@ import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.Round;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.PlayerGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.GameService;
 import ch.uzh.ifi.hase.soprafs24.service.LobbyService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.messaging.simp.SimpMessagingTemplate;
+//import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,24 +29,32 @@ public class LobbyController {
 
     private final LobbyService lobbyService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-
-    LobbyController(LobbyService lobbyService, UserService userService) {
+    LobbyController(LobbyService lobbyService, UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.lobbyService = lobbyService;
         this.userService = userService;
-
+        this.messagingTemplate = messagingTemplate;
     }
     @GetMapping("/lobbies")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<LobbyGetDTO> getAllLobbies() {
-        // fetch all users in the internal representation
         List<Lobby> lobbies = lobbyService.getAllLobbies();
         List<LobbyGetDTO> lobbyGetDTOs = new ArrayList<>();
 
-        // convert each user to the API representation
+        // Convert each lobby to the API representation
         for (Lobby lobby : lobbies) {
-            lobbyGetDTOs.add(DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+            // Convert players to player DTOs
+            List<Player> players = lobby.getPlayersList();
+            List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
+            for (Player player : players) {
+                playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
+            }
+            // Create LobbyGetDTO and set player DTOs
+            LobbyGetDTO lobbyGetDTO = DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby);
+            lobbyGetDTO.setPlayers(playerGetDTOs.toArray(new PlayerGetDTO[0]));
+            lobbyGetDTOs.add(lobbyGetDTO);
         }
         return lobbyGetDTOs;
     }
@@ -54,8 +66,8 @@ public class LobbyController {
         Player player = lobbyService.createPlayer(userToAdd);
         // convert API lobby to internal representation
         Lobby createdLobby = lobbyService.createLobby(player);
-        // create lobby
-        // convert internal representation of lobby back to API
+        messagingTemplate.convertAndSend("/topic/lobby" + createdLobby.getId(), DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby));
+
         return DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby);
     }
 
@@ -72,6 +84,8 @@ public class LobbyController {
         if (updatedLobby == null) {
             return ResponseEntity.notFound().build();
         }
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(updatedLobby));
+
         return ResponseEntity.noContent().build(); 
     }
 
@@ -88,6 +102,7 @@ public class LobbyController {
     public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.removePlayer(lobby, playerId);
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
     @PutMapping("/lobby/player/{lobbyId}/ready")
     @ResponseStatus(HttpStatus.OK)
@@ -96,6 +111,8 @@ public class LobbyController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         Player player = lobby.getPlayerById(userId);
         lobbyService.updatePlayerReadyStatus(player);
+
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
     @GetMapping("/lobby/player/{lobbyId}/ready")
     public ResponseEntity<Boolean> areAllPlayerReady(@PathVariable Long lobbyId) {
@@ -132,8 +149,11 @@ public class LobbyController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void gameStarter(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.startGame(lobbyId);
         lobbyService.startRound(lobbyId);
+        messagingTemplate.convertAndSend("/topic/start/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+
     }
 
     @GetMapping("/lobby/{lobbyId}/round")
