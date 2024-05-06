@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Leaderboard {
 
@@ -11,24 +12,38 @@ public class Leaderboard {
         this.userPoints = new HashMap<>();
     }
 
-    //public Map<User, Long> getUserPoints() {
-       // return userPoints;
-  //  }
-
-    public void setUserPoints(Map<Player, Long> userPoints) {
-        this.userPoints = userPoints;
+    public Map<Player, Long> getUserPoints() {
+        return userPoints;
     }
 
     public void addUser(Player player) {
         Long currentPoints = this.userPoints.get(player);
         if (currentPoints == null) {
-            // Der Benutzer ist noch nicht in der Map, also fügen wir ihn mit einem Punkt hinzu.
             this.userPoints.put(player, 0L);
         }
     }
 
-   // public void updatePoints(User user) {
-   //     Long currentPoints = this.userPoints.get(user);
-   //     this.userPoints.put(user, currentPoints + 1);
-   // }
+   public void addPoints(Player player, Long points) {
+        Long currentPoints = this.userPoints.get(player);
+        if (currentPoints == null) {
+            this.userPoints.put(player, points);
+        } else {
+            this.userPoints.put(player, currentPoints + points);
+        }
+    }
+
+    public void removePlayer(Player player) {
+        this.userPoints.remove(player);
+    }
+
+    public void resetPoints() {
+        this.userPoints.clear();
+    }
+
+    @Override
+    public String toString() {
+        return this.userPoints.entrySet().stream()
+                .map(entry -> entry.getKey().getUsername() + " " + entry.getValue())
+                .collect(Collectors.joining(","));
+    }
 }
