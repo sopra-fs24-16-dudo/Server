@@ -98,18 +98,5 @@ public class UserController {
     }
   }
 
-  @PutMapping("/users/{userId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
-  public ResponseEntity<?> updateUserbyId(@PathVariable Long userId, @RequestBody User request) {
 
-    User userToUpdate = userService.updateUserById(userId, request.getUsername(), request.getBirthday());
-    
-    // If user not found, return a 404 Not Found response
-    if (userToUpdate == null) {
-      return ResponseEntity.notFound().build();
-    }
-    // If user found, return a 204 No Content response    
-    return ResponseEntity.noContent().build();  
-  }
 }

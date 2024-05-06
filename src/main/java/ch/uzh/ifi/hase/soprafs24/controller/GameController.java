@@ -179,10 +179,7 @@ public class GameController {
     @ResponseBody
     public void endGame(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        Game game = lobby.getGame();
-
-        game.updatePlayersAfterGame();
-        messagingTemplate.convertAndSend("/topic/end/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        //messagingTemplate.convertAndSend("/topic/end/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
 
     }
 

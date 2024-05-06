@@ -151,6 +151,10 @@ public class LobbyController {
     public void gameStarter(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.startGame(lobbyId);
+        for (Player player : lobby.getPlayersList()) {
+            User user = userService.getUserById(player.getId());
+            user.incrementGamesPlayed();
+        }
         lobbyService.startRound(lobbyId);
         messagingTemplate.convertAndSend("/topic/start/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
 
@@ -170,4 +174,6 @@ public class LobbyController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         return lobbyService.getLeaderboard(lobby).toString();
     }
+
+
 }

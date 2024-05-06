@@ -34,12 +34,6 @@ public class User implements Serializable {
   @Column(nullable = false, unique = true)
   private String username;
 
-  @Column(nullable = false)
-  private LocalDate creationDate;
-
-  @Column
-  private LocalDate birthday;
-
   @Column(nullable = false, unique = true)
   private String token;
 
@@ -49,11 +43,6 @@ public class User implements Serializable {
   @Column(nullable = false)
   private int gamesPlayed;
 
-  @Column(nullable = false)
-  private int gamesWon;
-
-  @Column(nullable = false)
-  private double winRatio;
 
     @ManyToMany
     @JoinTable(
@@ -90,22 +79,6 @@ public class User implements Serializable {
     this.username = username;
   }
 
-  public LocalDate getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(LocalDate creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public LocalDate getBirthday() {
-    return birthday;
-  }
-
-  public void setBirthday(LocalDate birthday) {
-    this.birthday = birthday;
-  }
-
   public String getToken() {
     return token;
   }
@@ -126,19 +99,4 @@ public class User implements Serializable {
   }
   public void incrementGamesPlayed() { this.gamesPlayed++; }
 
-  public int getGamesWon() {
-      return gamesWon;
-  }
-
-  public void incrementGamesWon() { this.gamesWon++; }
-
-  public void setWinRatio(double ratio) {
-      this.winRatio = ratio;
-  }
-  public double getWinRatio() {
-     if (gamesPlayed == 0) {
-        return 0.0;
-     }
-     return (double) gamesWon / gamesPlayed * 100;
-  }
 }

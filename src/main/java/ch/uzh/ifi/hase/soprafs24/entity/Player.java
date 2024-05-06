@@ -8,7 +8,6 @@ public class Player {
     private boolean disqualified;
     private long id;
     private String username;
-
     private boolean ready;
     private boolean rolled;
     public Player(User user) {
