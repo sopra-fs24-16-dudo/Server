@@ -12,9 +12,6 @@ public class Leaderboard {
         this.userPoints = new HashMap<>();
     }
 
-    public Map<Player, Long> getUserPoints() {
-        return userPoints;
-    }
 
     public void addUser(Player player) {
         Long currentPoints = this.userPoints.get(player);
@@ -39,6 +36,11 @@ public class Leaderboard {
     public void resetPoints() {
         this.userPoints.clear();
     }
+
+    public Map<Player, Long> getUserPoints() {
+        return userPoints;
+    }
+
 
     @Override
     public String toString() {

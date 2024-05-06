@@ -26,6 +26,7 @@ public class Lobby implements Serializable{
     public Lobby(Long id) {
         this.players = new LinkedHashMap<>();
         this.id = id;
+        this.leaderboard = new Leaderboard();
     }
 
     public Lobby() {
@@ -68,6 +69,7 @@ public class Lobby implements Serializable{
 
     public void addPlayer(Player player) {
         players.put(player.getId(), player);
+        leaderboard.addUser(player);
     }
 
     public void deletePlayer(Long playerId) {
@@ -135,7 +137,9 @@ public class Lobby implements Serializable{
     }
 
     public Player getWinner(){
-        return game.getWinner();
+        Player winner = game.getWinner();
+        updatePoints(winner);
+        return winner;
     }
 
     public boolean checkWinner(){
@@ -153,4 +157,17 @@ public class Lobby implements Serializable{
     public void setWinner(Player winner) {
         game.setWinner(winner);
     }
+
+    public void updatePoints(Player winner) {
+        if (winner.getChips() == 3) {
+            leaderboard.addPoints(winner, 2L);
+        }
+        else {
+            leaderboard.addPoints(winner, 1L);
+        }
+    }
+    public Leaderboard getLeaderboard() {
+        return leaderboard;
+    }
+
 }

@@ -163,4 +163,11 @@ public class LobbyController {
         return lobbyService.getRound(lobbyId).toString();
     }
 
+    @GetMapping("/leaderboard/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getLeaderboard(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        return lobbyService.getLeaderboard(lobby).toString();
+    }
 }

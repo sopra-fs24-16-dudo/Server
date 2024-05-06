@@ -218,5 +218,9 @@ public class LobbyService {
 
      */
 
+    public Leaderboard getLeaderboard(Lobby lobby) {
+        return lobby.getLeaderboard();
+    }
+
 
 }
