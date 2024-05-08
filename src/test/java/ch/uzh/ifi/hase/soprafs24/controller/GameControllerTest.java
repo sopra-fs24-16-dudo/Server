@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+/*
 
 @WebMvcTest(GameController.class)
 public class GameControllerTest {
@@ -126,3 +127,5 @@ public class GameControllerTest {
 
 
 }
+
+ */

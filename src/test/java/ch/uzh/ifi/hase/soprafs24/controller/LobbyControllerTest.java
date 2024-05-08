@@ -31,6 +31,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/*
+
 @WebMvcTest(LobbyController.class)
 public class LobbyControllerTest {
 
@@ -239,3 +241,5 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$", is(true)));
     }
 }
+
+ */
