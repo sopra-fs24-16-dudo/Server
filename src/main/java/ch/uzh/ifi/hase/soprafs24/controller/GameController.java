@@ -73,6 +73,9 @@ public class GameController {
     public String getNextBid(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         //messagingTemplate.convertAndSend("/topic/game/nextbid/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        if (lobby.getNextBid() == null){
+            return "Null";
+        }
         return lobby.getNextBid().toString();
     }
 
@@ -81,6 +84,9 @@ public class GameController {
     @ResponseBody
     public List<Bid> getValidBids(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        if (lobby.getValidBids() == null){
+            return new ArrayList<Bid>();
+        }
         return lobby.getValidBids();
     }
 

@@ -96,8 +96,10 @@ public class LibreState implements RoundState {
         if (currentBid.getSuit() == null){
             return new Bid(Suit.NINE, 1L);
         }
-        if (currentBid.getAmount() >= playerSize * 5)
+        if (currentBid.getAmount() >= playerSize * 5 && getValidBids(currentBid, bidder, playerSize).size() > 0)
             return getValidBids(currentBid, bidder, playerSize).get(0);
+        else if (getValidBids(currentBid, bidder, playerSize).size() == 0)
+            return null;
         return new Bid(currentBid.getSuit(), currentBid.getAmount() + 1);
     }
 }
