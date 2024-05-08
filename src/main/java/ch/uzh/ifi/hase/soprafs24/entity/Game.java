@@ -63,19 +63,19 @@ public class Game implements Serializable {
         return false;
     }
 
-    public void updatePlayersAfterGame() {
-        for (Player player : players.values()) {
-            User user = player.getUser();
-            if (user != null) {
-                user.incrementGamesPlayed();
-                if (player == winner) {
-                    user.incrementGamesWon();
-                }
-                double winRatio = user.getWinRatio();
-                user.setWinRatio(winRatio);
-            }
-        }
-    }
+    //public void updatePlayersAfterGame() {
+      //  for (Player player : players.values()) {
+        //    User user = player.getUser();
+          //  if (user != null) {
+            //    user.incrementGamesPlayed();
+              //  if (player == winner) {
+                //    user.incrementGamesWon();
+               // }
+               // double winRatio = user.getWinRatio();
+                //user.setWinRatio(winRatio);
+           // }
+//        }
+  //  }
 
     //  public void startGame(){
     //set starting player
