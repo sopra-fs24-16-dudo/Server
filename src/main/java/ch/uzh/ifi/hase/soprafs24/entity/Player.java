@@ -20,6 +20,14 @@ public class Player {
         ready = false;
     }
 
+    public Player(){
+        this.hand = new Hand();
+        rolled = false;
+        this.chips = 3;
+        disqualified = false;
+        ready = false;
+    }
+
     public User getUser() {
         return user;
     }

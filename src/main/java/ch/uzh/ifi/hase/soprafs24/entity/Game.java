@@ -28,6 +28,7 @@ public class Game implements Serializable {
         }
         isOpen = true;
         winner = null;
+        round = new Round();
     }
 
     public void playRound() {
@@ -88,6 +89,11 @@ public class Game implements Serializable {
     // }
 
     public Player calculateStartingPlayer() {
+        if (startingPlayer == null) {
+            //get any player from the list
+            startingPlayer = players.values().iterator().next();
+            return startingPlayer;
+        }
         if (startingPlayer.getChips() > 0) {
             return startingPlayer;
         }
@@ -202,6 +208,12 @@ public class Game implements Serializable {
             players.get(round.getLoserId()).disqualify();
         }
     }
+
+
+    public Player getCurrentPlayer(){
+        return round.getCurrentPlayer();
+    }
+
     public void setPlayers(LinkedHashMap<Long, Player> players) {
         this.players = players;
     }

@@ -31,6 +31,15 @@ public class Round {
         this.SuitCounter = state.getSuitCounter(players);
     }
 
+    public Round(){
+        this.players = null;
+        this.currentPlayer = null;
+        this.lastPlayer = null;
+        this.loser = null;
+        this.currentBid = null;
+        this.SuitCounter = null;
+    }
+
     public void placeBid(Bid bid){
         List<Bid> validBids = state.getValidBids(currentBid, currentPlayer, (long) players.size());
         currentBid = state.placeBid(bid, validBids);
@@ -64,6 +73,8 @@ public class Round {
     }
 
     public Bid getNextBid(){
+        if (this.players == null)
+            return new Bid(Suit.NINE, 1L);
         return state.getNextBid(currentBid, currentPlayer, (long) players.size());
     }
 

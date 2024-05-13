@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,15 +47,10 @@ public class LobbyController {
         // Convert each lobby to the API representation
         for (Lobby lobby : lobbies) {
             // Convert players to player DTOs
-            List<Player> players = lobby.getPlayersList();
-            List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
-            for (Player player : players) {
-                playerGetDTOs.add(DTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
-            }
-            // Create LobbyGetDTO and set player DTOs
+            LinkedHashMap<Long, Player> players = lobby.getPlayers();
             LobbyGetDTO lobbyGetDTO = DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby);
-            lobbyGetDTO.setPlayers(playerGetDTOs.toArray(new PlayerGetDTO[0]));
-            lobbyGetDTOs.add(lobbyGetDTO);
+            lobbyGetDTO.setPlayers(players);
+
         }
         return lobbyGetDTOs;
     }

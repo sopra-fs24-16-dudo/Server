@@ -63,7 +63,7 @@ public class GameController {
     @ResponseBody
     public String getBid(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //messagingTemplate.convertAndSend("/topic/game/currentbid/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        messagingTemplate.convertAndSend("/topic/game/currentbid/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby.getCurrentBid().toString();
     }
 
@@ -72,7 +72,7 @@ public class GameController {
     @ResponseBody
     public String getNextBid(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //messagingTemplate.convertAndSend("/topic/game/nextbid/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        //messagingTemplate.convertAndSend("/topic/game/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         if (lobby.getNextBid() == null){
             return "Null";
         }
@@ -99,7 +99,7 @@ public class GameController {
         bid = bid.substring(1, bid.length() - 1);
         Bid newBid = new Bid(bid);
         lobby.placeBid(newBid);
-        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
 
     @GetMapping("/games/currentPlayer/{lobbyId}")
@@ -126,7 +126,7 @@ public class GameController {
     public void dudo(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobby.dudo();
-        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
 
     @GetMapping("/games/winner/{lobbyId}")
@@ -161,8 +161,8 @@ public class GameController {
     @ResponseBody
     public void startRound(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         lobby.startRound();
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
 
     @GetMapping("/games/counter/{lobbyId}")

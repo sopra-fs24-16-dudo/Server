@@ -27,6 +27,7 @@ public class Lobby implements Serializable{
         this.players = new LinkedHashMap<>();
         this.id = id;
         this.leaderboard = new Leaderboard();
+        this.game = new Game(this);
     }
 
     public Lobby() {
@@ -117,8 +118,15 @@ public class Lobby implements Serializable{
     }
 
     public Bid getCurrentBid(){
+        if (game.getRound() != null)
+            return game.getRound().getCurrentBid();
         return game.getCurrentBid();
     }
+
+    public Player getCurrentPlayer(){
+        return game.getCurrentPlayer();
+    }
+
 
     public Bid getNextBid(){
         return game.getNextBid();
@@ -159,11 +167,13 @@ public class Lobby implements Serializable{
     }
 
     public void updatePoints(Player winner) {
-        if (winner.getChips() == 3) {
-            leaderboard.addPoints(winner, 2L);
-        }
-        else {
-            leaderboard.addPoints(winner, 1L);
+        if (winner != null){
+            if (winner.getChips() == 3) {
+                leaderboard.addPoints(winner, 2L);
+            }
+            else {
+                leaderboard.addPoints(winner, 1L);
+            }
         }
     }
     public Leaderboard getLeaderboard() {

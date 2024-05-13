@@ -56,6 +56,8 @@ public interface DTOMapper {
               .toArray(PlayerGetDTO[]::new);
   }
 
+
+
     PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 
   @Mapping(source = "id", target = "id")
