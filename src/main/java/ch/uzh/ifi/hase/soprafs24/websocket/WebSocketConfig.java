@@ -16,7 +16,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register the endpoint for clients to connect to the WebSocket server
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000", "https://sopra-fs24-group-16-client.oa.r.appspot.com").withSockJS();
     }
 
     @Override

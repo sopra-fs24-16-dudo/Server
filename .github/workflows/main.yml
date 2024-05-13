@@ -44,7 +44,6 @@ jobs:
         with:
           deliverables: app.yaml
           version: v2
-          project_id: sopra-fs24-group-16-server
           credentials: ${{ secrets.GCP_SERVICE_CREDENTIALS }}
 
       - name: Test
