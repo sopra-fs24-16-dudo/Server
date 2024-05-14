@@ -65,6 +65,8 @@ public class Round {
     }
 
     public Long getLoserId(){
+        if (loser == null)
+            return null;
         return loser.getId();
     }
 

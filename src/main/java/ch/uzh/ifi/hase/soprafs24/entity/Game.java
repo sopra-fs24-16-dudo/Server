@@ -147,6 +147,9 @@ public class Game implements Serializable {
     }
 
     public Player getLoser() {
+        if (round.getLoserId() == null) {
+            return null;
+        }
         Player player = null;
         for (Player p : players.values()) {
             if (p.getId() == (round.getLoserId())) {

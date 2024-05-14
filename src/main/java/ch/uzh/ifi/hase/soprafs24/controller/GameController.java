@@ -54,7 +54,7 @@ public class GameController {
         if (player.hasRolled()){
             return player.getHand();
         }
-        //player.roll();
+        player.roll();
         return player.getHand();
     }
 
@@ -161,6 +161,7 @@ public class GameController {
     @ResponseBody
     public void startRound(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         lobby.startRound();
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
