@@ -7,14 +7,11 @@ import java.util.LinkedHashMap;
 public class LobbyGetDTO {
 
     private Long id;
+    private Long adminId;
     private LinkedHashMap<Long, Player> players;
-
     private Bid currentBid;
-
     private Bid nextBid;
-
     private Player winner;
-
     private Player currentPlayer;
 
     //setter and getter
@@ -25,6 +22,10 @@ public class LobbyGetDTO {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Long getAdminId() { return adminId; }
+
+    public void setAdminId(Long adminId) { this.adminId = adminId; }
 
     public LinkedHashMap<Long, Player> getPlayers() {
         return players;

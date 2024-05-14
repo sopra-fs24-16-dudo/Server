@@ -100,6 +100,16 @@ public class LobbyController {
         lobbyService.removePlayer(lobby, playerId);
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
+    @PostMapping("/lobby/kick/{lobbyId}/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void kickPlayerFromLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+
+        messagingTemplate.convertAndSend("/topic/kick/" + playerId,"You have been kicked from the lobby");
+        lobbyService.removePlayer(lobby, playerId);
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+    }
     @PutMapping("/lobby/player/{lobbyId}/ready")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -107,7 +117,6 @@ public class LobbyController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         Player player = lobby.getPlayerById(userId);
         lobbyService.updatePlayerReadyStatus(player);
-
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
     @GetMapping("/lobby/player/{lobbyId}/ready")

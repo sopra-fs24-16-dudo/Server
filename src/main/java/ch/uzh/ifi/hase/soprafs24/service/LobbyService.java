@@ -66,9 +66,7 @@ public class LobbyService {
     public Lobby createLobby(Player newPlayer) {
         Long id = lobbyManager.generateLobbyId();
         Lobby newLobby = new Lobby(id);
-        //VoiceChannel voiceChannel = voiceChannelService.createVoiceChannel(newLobby);
-        // Associate the voice channel with the lobby
-        //newLobby.setVoiceChannel(voiceChannel);
+        newLobby.setAdminId(newPlayer.getId());
         newLobby.addPlayer(newPlayer);
         lobbyManager.addLobby(newLobby);
         log.debug("Created Information for Lobby: {}", newLobby.getId());
@@ -120,11 +118,18 @@ public class LobbyService {
     }
 
 
-    public Lobby removePlayer(Lobby lobby, Long playerId) {
+    public Lobby removePlayer(Lobby lobby, long playerId) {
         lobby.deletePlayer(playerId);
         if (lobby.getPlayersList().isEmpty()) {
             deleteLobby(lobby.getId());
             return null;
+        }
+        if (playerId == (lobby.getAdminId())) {
+            lobby.setAdminId(lobby.getPlayersList().stream()
+                    .filter(player -> !Long.valueOf(player.getId()).equals(playerId))
+                    .findFirst()
+                    .map(Player::getId)
+                    .orElse(null));
         }
         messagingTemplate.convertAndSend("/topic/lobby/" + lobby.getId(), DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby;

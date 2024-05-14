@@ -15,7 +15,7 @@ public class Lobby implements Serializable{
 
     //private VoiceChannel voiceChannel;
 
-
+    private long adminId;
     private Chat chat = new Chat();
 
 
@@ -26,6 +26,7 @@ public class Lobby implements Serializable{
     public Lobby(Long id) {
         this.players = new LinkedHashMap<>();
         this.id = id;
+        this.adminId = adminId;
         this.leaderboard = new Leaderboard();
         this.game = new Game(this);
     }
@@ -90,8 +91,12 @@ public class Lobby implements Serializable{
         this.id = id;
     }
 
-    //public VoiceChannel getVoiceChannel() { return voiceChannel; }
-    //public void setVoiceChannel(VoiceChannel voiceChannel) { this.voiceChannel = voiceChannel; }
+    public long getAdminId() {
+        return adminId;
+    }
+    public void setAdminId(long adminId) {
+        this.adminId = adminId;
+    }
 
     public LinkedHashMap<Long, Player> getPlayers() {
         return players;
