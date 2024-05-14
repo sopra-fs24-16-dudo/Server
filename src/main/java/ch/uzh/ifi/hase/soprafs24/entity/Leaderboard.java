@@ -14,8 +14,9 @@ public class Leaderboard {
 
 
     public void addUser(Player player) {
-        Long currentPoints = this.userPoints.get(player);
-        if (currentPoints == null) {
+        boolean playerExists = this.userPoints.keySet().stream()
+                .anyMatch(existingPlayer -> existingPlayer.getId() == player.getId());
+        if (!playerExists) {
             this.userPoints.put(player, 0L);
         }
     }
