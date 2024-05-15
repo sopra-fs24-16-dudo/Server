@@ -184,8 +184,12 @@ public class GameController {
     @PutMapping("/games/end/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void endGame(@PathVariable Long lobbyId) {
+    public void endGame(@PathVariable Long lobbyId, @RequestBody Long userId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        Player winner = lobby.getWinner();
+        if (winner.getId() == userId){
+            lobby.updatePoints(winner);
+        }
         //messagingTemplate.convertAndSend("/topic/end/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
 
     }

@@ -115,6 +115,7 @@ public class Lobby implements Serializable{
     }
 
     public void startRound(){
+        setWinner(null);
         game.playRound();
     }
 
@@ -151,7 +152,6 @@ public class Lobby implements Serializable{
 
     public Player getWinner(){
         Player winner = game.getWinner();
-        updatePoints(winner);
         return winner;
     }
 

@@ -21,12 +21,14 @@ public class Leaderboard {
         }
     }
 
-   public void addPoints(Player player, Long points) {
-        Long currentPoints = this.userPoints.get(player);
-        if (currentPoints == null) {
-            this.userPoints.put(player, points);
-        } else {
-            this.userPoints.put(player, currentPoints + points);
+    public void addPoints(Player winner, Long points) {
+        Player matchingPlayer = this.userPoints.keySet().stream()
+                .filter(existingPlayer -> existingPlayer.getId() == winner.getId())
+                .findFirst()
+                .orElse(null);
+        if (matchingPlayer != null) {
+            Long currentPoints = this.userPoints.get(matchingPlayer);
+            this.userPoints.put(matchingPlayer, currentPoints + points);
         }
     }
 

@@ -42,25 +42,19 @@ public class Game implements Serializable {
 
     public boolean checkWinner() {
         int notDisqualifiedCount = 0;
-        Player winner = null;
-
         for (Player player : players.values()) {
             if (!player.isDisqualified()) {
                 notDisqualifiedCount++;
-                if (winner == null) {
-                    winner = player;
-                } else {
-                    winner = null;
-                    break;
+            }
+        }
+        if (notDisqualifiedCount == 1) {
+            for (Player player : players.values()) {
+                if (!player.isDisqualified()) {
+                    setWinner(player);
+                    return true;
                 }
             }
         }
-
-        if (notDisqualifiedCount == 1 && winner != null) {
-            setWinner(winner);
-            return true;
-        }
-
         return false;
     }
 
