@@ -180,5 +180,13 @@ public class LobbyController {
         return lobbyService.getLeaderboard(lobby).toString();
     }
 
+    @GetMapping("/lobby/availability/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public boolean isLobbyOpen(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        return lobby.isOpen();
+    }
+
 
 }

@@ -12,7 +12,7 @@ public class Lobby implements Serializable{
 
     public LinkedHashMap<Long, Player> players;
 
-
+    private boolean isOpen;
     //private VoiceChannel voiceChannel;
 
     private long adminId;
@@ -29,6 +29,7 @@ public class Lobby implements Serializable{
         this.adminId = adminId;
         this.leaderboard = new Leaderboard();
         this.game = new Game(this);
+        isOpen = true;
     }
 
     public Lobby() {
@@ -51,8 +52,13 @@ public class Lobby implements Serializable{
  //   }
 
     public void startGame() {
+        isOpen = false;
         game = new Game(this);
         //game.startGame();
+    }
+
+    public boolean isOpen() {
+        return isOpen;
     }
 
     public Game getGame() {
@@ -70,8 +76,10 @@ public class Lobby implements Serializable{
     }
 
     public void addPlayer(Player player) {
+        if (isOpen){
         players.put(player.getId(), player);
         leaderboard.addUser(player);
+        }
     }
 
     public void deletePlayer(Long playerId) {
@@ -172,6 +180,7 @@ public class Lobby implements Serializable{
     }
 
     public void updatePoints(Player winner) {
+        isOpen = true;
         if (winner != null){
             if (winner.getChips() == 3) {
                 leaderboard.addPoints(winner, 2L);
