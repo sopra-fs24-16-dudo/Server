@@ -1,5 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
+
+import javax.swing.plaf.nimbus.State;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -151,4 +154,5 @@ public class Game implements Serializable {
     public void setPlayers(LinkedHashMap<Long, Player> players) {
         this.players = players;
     }
+
 }

@@ -1,8 +1,13 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
+
 import java.io.Serializable;
 import java.util.*;
 import javax.persistence.*;
+import javax.swing.plaf.nimbus.State;
 
 
 public class Lobby implements Serializable{
@@ -163,6 +168,10 @@ public class Lobby implements Serializable{
     }
     public Leaderboard getLeaderboard() {
         return leaderboard;
+    }
+
+    public boolean isFijo() {
+        return game.getRound().getState() instanceof FijoState;
     }
 
 }

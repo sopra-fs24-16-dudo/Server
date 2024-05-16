@@ -187,4 +187,12 @@ public class GameController {
         }
     }
 
+    @GetMapping("/games/fijoCheck/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public boolean checkFijo(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        return lobby.isFijo();
+    }
+
 }
