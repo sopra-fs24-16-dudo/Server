@@ -58,33 +58,8 @@ public class Game implements Serializable {
         return false;
     }
 
-    //public void updatePlayersAfterGame() {
-      //  for (Player player : players.values()) {
-        //    User user = player.getUser();
-          //  if (user != null) {
-            //    user.incrementGamesPlayed();
-              //  if (player == winner) {
-                //    user.incrementGamesWon();
-               // }
-               // double winRatio = user.getWinRatio();
-                //user.setWinRatio(winRatio);
-           // }
-//        }
-  //  }
-
-    //  public void startGame(){
-    //set starting player
-    //     setStartingPlayer(players.get(0));
-    //while (!checkWinner()) {
-    //   Player loser = playRound(players.values(), startingPlayer);
-    //   subtractChips(loser);
-    //   setStartingPlayer(loser);
-    // }
-    // }
-
     public Player calculateStartingPlayer() {
         if (startingPlayer == null) {
-            //get any player from the list
             startingPlayer = players.values().iterator().next();
             return startingPlayer;
         }
@@ -92,11 +67,8 @@ public class Game implements Serializable {
             return startingPlayer;
         }
         else {
-            // Get the list of players
             List<Player> playerList = getPlayers();
-            // Find the index of the current starting player
             int currentIndex = playerList.indexOf(startingPlayer);
-            // Check the next players
             for (int i = 1; i < playerList.size(); i++) {
                 Player nextPlayer = playerList.get((currentIndex + i) % playerList.size());
                 if (nextPlayer.getChips() > 1) {
@@ -110,31 +82,12 @@ public class Game implements Serializable {
                 }
             }
         }
-        // If no player with chips > 0 is found, return null or handle appropriately
         return null;
-    }
-
-    // private void subtractChips(Player loser){
-    //   loser.subtractChip();
-    //  }
-
-    public Player getStartingPlayer() {
-        return startingPlayer;
-    }
-
-    public void setStartPlayer(Player player){
-        //TODO if a player is disqualified, the next player should start
-        startingPlayer = player;
-    }
-
-    public void setCurrentBid(Bid expectedBid) {
-        this.round.getCurrentBid();
     }
 
     public Player getWinner() {
         return winner;
     }
-
 
     public void setWinner(Player player) {
         winner = player;
@@ -153,21 +106,6 @@ public class Game implements Serializable {
         return player;
     }
 
-    public Long getLobbyId() {
-        return lobbyId;
-    }
-
-    public void close() {
-        isOpen = false;
-    }
-
-    public void open() {
-        isOpen = true;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
 
     public List<Player> getPlayers() {
         return new ArrayList<>(players.values());
@@ -205,7 +143,6 @@ public class Game implements Serializable {
             players.get(round.getLoserId()).disqualify();
         }
     }
-
 
     public Player getCurrentPlayer(){
         return round.getCurrentPlayer();

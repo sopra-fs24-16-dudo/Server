@@ -78,9 +78,6 @@ public class Player {
         this.id = id;
     }
 
-    public Long countSuit (Suit suit){
-        return hand.countSuit(suit);
-    }
 
     public boolean isReady() {
         return ready;

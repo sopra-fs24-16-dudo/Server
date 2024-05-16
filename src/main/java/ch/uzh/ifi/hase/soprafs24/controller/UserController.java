@@ -31,11 +31,8 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<UserGetDTO> getAllUsers() {
-    // fetch all users in the internal representation
     List<User> users = userService.getUsers();
     List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-    // convert each user to the API representation
     for (User user : users) {
       userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
     }
@@ -46,11 +43,8 @@ public class UserController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO) {
-    // convert API user to internal representation
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-    // create user
     User createdUser = userService.createUser(userInput);
-    // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
   }
 
@@ -59,28 +53,19 @@ public class UserController {
   @ResponseBody
   public ResponseEntity<UserGetDTO> getUserById(@PathVariable Long userId) {
     User user = userService.getUserById(userId);
-    
-    // If user not found, return a 404 Not Found response
     if (user == null) {
       return ResponseEntity.notFound().build();
     }
-    
-    // Convert the user to DTO
     UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-    
-    // Return the DTO in the response body with status 200 OK
     return ResponseEntity.ok(userGetDTO);
   }
 
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody User loginUser) {
-
     User authenticatedUser = userService.checkUserCredentials(loginUser);
-
     if (authenticatedUser != null) {
       return ResponseEntity.ok(authenticatedUser);
     } else {
-      // Return a 401 Unauthorized response
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
     }
   }
@@ -88,12 +73,9 @@ public class UserController {
   @PutMapping("/logout")
   public ResponseEntity<?> logout(@RequestBody User userId) {
     User statusUser = userService.updateUserStatus(userId);
-
-    // Check if the user was successfully updated
     if (statusUser != null) {
       return ResponseEntity.ok().build();
     } else {
-      // User not found, return 404 Not Found error
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user found!");
     }
   }

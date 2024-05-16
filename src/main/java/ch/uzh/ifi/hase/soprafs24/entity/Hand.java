@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 public class Hand {
 
-    //initialize with 5 dices
     private Dice[] dices = new Dice[5];
 
     public Hand() {

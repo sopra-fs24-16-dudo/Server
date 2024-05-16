@@ -72,14 +72,11 @@ public class FijoState implements RoundState {
     @Override
     public Map<Suit, Long> getSuitCounter(List<Player> players) {
         Map<Suit, Long> suitCounter = new HashMap<>();
-        // Initialize the map
         for (Suit suit : Suit.values()) {
             suitCounter.put(suit, 0L);
         }
-
         for (Player player : players) {
             for (Dice dice : player.getHand().getDices()) {
-                // Increase the counter for the card's suit
                 suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
             }
         }

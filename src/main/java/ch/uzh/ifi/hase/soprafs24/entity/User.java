@@ -1,23 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
-import org.springframework.boot.availability.ReadinessState;
-
-import java.time.LocalDate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-/**
- * Internal User Representation
- * This class composes the internal representation of the user and defines how
- * the user is stored in the database.
- * Every variable will be mapped into a database field with the @Column
- * annotation
- * - nullable = false -> this cannot be left empty
- * - unique = true -> this value must be unqiue across the database -> composes
- * the primary key
- */
 @Entity
 @Table(name = "USER")
 public class User implements Serializable {
@@ -98,5 +85,4 @@ public class User implements Serializable {
       return gamesPlayed;
   }
   public void incrementGamesPlayed() { this.gamesPlayed++; }
-
 }

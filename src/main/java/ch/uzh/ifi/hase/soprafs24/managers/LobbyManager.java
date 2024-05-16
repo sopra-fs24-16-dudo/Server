@@ -36,7 +36,6 @@ public class LobbyManager {
     }
 
     public Long generateLobbyId() {
-        //get lobby with highest id
         Long maxId = 0L;
         for (Long id : lobbies.keySet()) {
             if (id > maxId) {

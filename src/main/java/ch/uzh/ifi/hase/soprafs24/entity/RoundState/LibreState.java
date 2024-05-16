@@ -14,7 +14,6 @@ public class LibreState implements RoundState {
 
     @Override
     public Bid placeBid(Bid bid, List <Bid> validBids) {
-        //check if the values of the bid match any of the valid bids
         for (Bid validBid : validBids) {
             if (bid.getSuit() == validBid.getSuit() && bid.getAmount() == validBid.getAmount()){
                 return bid;
@@ -69,18 +68,13 @@ public class LibreState implements RoundState {
     @Override
     public Map<Suit, Long> getSuitCounter(List<Player> players) {
         Map<Suit, Long> suitCounter = new HashMap<>();
-        // Initialize the map
         for (Suit suit : Suit.values()) {
             suitCounter.put(suit, 0L);
         }
-
         for (Player player : players) {
             for (Dice dice : player.getHand().getDices()) {
-                // Increase the counter for the card's suit
                 if (dice.getSuit() != Suit.ACE)
                     suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
-
-                // If the card is an Ace, increase the counter for all suits
                 if (dice.getSuit() == Suit.ACE) {
                     for (Suit suit : Suit.values()) {
                         suitCounter.put(suit, suitCounter.get(suit) + 1);

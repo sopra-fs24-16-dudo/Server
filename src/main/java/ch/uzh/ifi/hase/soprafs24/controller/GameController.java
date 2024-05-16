@@ -36,8 +36,6 @@ public class GameController {
     @ResponseBody
     public List<Player> getPlayers(@PathVariable Long lobbyId) {
         List<Player> players = lobbyService.getPlayersInLobby(lobbyId);
-        //Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //messagingTemplate.convertAndSend("/topic/game/player/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         if (players != null){
             return players;
         }
@@ -72,7 +70,6 @@ public class GameController {
     @ResponseBody
     public String getNextBid(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //messagingTemplate.convertAndSend("/topic/game/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         if (lobby.getNextBid() == null){
             return "Null";
         }
@@ -95,7 +92,6 @@ public class GameController {
     @ResponseBody
     public void placeBid(@PathVariable Long lobbyId, @RequestBody String bid) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //delete first and last character of bid
         bid = bid.substring(1, bid.length() - 1);
         Bid newBid = new Bid(bid);
         lobby.placeBid(newBid);
@@ -143,7 +139,6 @@ public class GameController {
     @ResponseBody
     public boolean checkWinner(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-        //messagingTemplate.convertAndSend("/topic/game/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
         return lobby.checkWinner();
     }
 
@@ -190,8 +185,6 @@ public class GameController {
         if (winner.getId() == userId){
             lobby.updatePoints(winner);
         }
-        //messagingTemplate.convertAndSend("/topic/end/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
-
     }
 
 }

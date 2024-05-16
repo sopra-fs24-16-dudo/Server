@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
-import java.util.Collection;
 
 import java.util.List;
 import java.util.Map;
@@ -81,7 +80,13 @@ public class Round {
     }
 
     public List<Bid> getValidBids(){
-        return state.getValidBids(currentBid, currentPlayer, (long) players.size());
+        int activePlayers = 0;
+        for (Player player : this.players) {
+            if (!player.isDisqualified()) {
+                activePlayers++;
+            }
+        }
+        return state.getValidBids(currentBid, currentPlayer, (long) activePlayers);
     }
 
     public Player getCurrentPlayer() {
@@ -103,7 +108,6 @@ public class Round {
     }
 
     public void setLastPlayer(Player player) {
-        //find the player in the list of players that matches the ID of player
         for (Player p : players) {
             if (p.getId() == (player.getId())) {
                 lastPlayer = p;
@@ -127,8 +131,6 @@ public class Round {
         return this.players;
     }
 
-    public void setCurrentBid(Bid bid) {this.currentBid = bid;}
-
     @Override
     public String toString() {
         return "Round{" +
@@ -139,7 +141,4 @@ public class Round {
                 ", currentBid=" + currentBid +
                 '}';
     }
-
-
-
 }

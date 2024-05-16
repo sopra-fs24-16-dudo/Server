@@ -32,19 +32,6 @@ public class Leaderboard {
         }
     }
 
-    public void removePlayer(Player player) {
-        this.userPoints.remove(player);
-    }
-
-    public void resetPoints() {
-        this.userPoints.clear();
-    }
-
-    public Map<Player, Long> getUserPoints() {
-        return userPoints;
-    }
-
-
     @Override
     public String toString() {
         return this.userPoints.entrySet().stream()

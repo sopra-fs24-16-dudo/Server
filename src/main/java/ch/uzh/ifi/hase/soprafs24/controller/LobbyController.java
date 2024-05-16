@@ -43,10 +43,7 @@ public class LobbyController {
     public List<LobbyGetDTO> getAllLobbies() {
         List<Lobby> lobbies = lobbyService.getAllLobbies();
         List<LobbyGetDTO> lobbyGetDTOs = new ArrayList<>();
-
-        // Convert each lobby to the API representation
         for (Lobby lobby : lobbies) {
-            // Convert players to player DTOs
             LinkedHashMap<Long, Player> players = lobby.getPlayers();
             LobbyGetDTO lobbyGetDTO = DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby);
             lobbyGetDTO.setPlayers(players);
@@ -60,7 +57,6 @@ public class LobbyController {
     public LobbyGetDTO createLobby(@RequestBody Long newUser) {
         User userToAdd = userService.getUserById(newUser);
         Player player = lobbyService.createPlayer(userToAdd);
-        // convert API lobby to internal representation
         Lobby createdLobby = lobbyService.createLobby(player);
         messagingTemplate.convertAndSend("/topic/lobby" + createdLobby.getId(), DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby));
 
@@ -85,7 +81,7 @@ public class LobbyController {
         return ResponseEntity.noContent().build(); 
     }
 
-    @GetMapping("/lobby/players/{lobbyId}") // Corrected the path variable syntax
+    @GetMapping("/lobby/players/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<Player> getPlayersFromLobby(@PathVariable Long lobbyId) {
@@ -105,7 +101,6 @@ public class LobbyController {
     @ResponseBody
     public void kickPlayerFromLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
-
         messagingTemplate.convertAndSend("/topic/kick/" + playerId,"You have been kicked from the lobby");
         lobbyService.removePlayer(lobby, playerId);
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
@@ -121,9 +116,7 @@ public class LobbyController {
     }
     @GetMapping("/lobby/player/{lobbyId}/ready")
     public ResponseEntity<Boolean> areAllPlayerReady(@PathVariable Long lobbyId) {
-        // Check if all users in the lobby are ready
         boolean allUsersReady = lobbyService.allPlayersReady(lobbyId);
-        // Return true if all users are ready, otherwise false
         return ResponseEntity.ok(allUsersReady && lobbyService.getPlayersInLobby(lobbyId).size() > 1);
     }
 
@@ -143,7 +136,7 @@ public class LobbyController {
         return lobbyService.getMessages(lobbyId);
     }
 
-    @GetMapping("/rules") // Corrected the path variable syntax
+    @GetMapping("/rules")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<String> getRules() {

@@ -18,7 +18,6 @@ public class Lobby implements Serializable{
     private long adminId;
     private Chat chat = new Chat();
 
-
     private Leaderboard leaderboard;
 
     private Game game;
@@ -36,20 +35,6 @@ public class Lobby implements Serializable{
         this.players = new LinkedHashMap<>();
     }
 
-   // public Leaderboard createLeaderboard() {
-  //      Leaderboard leaderboard = new Leaderboard();
- //       Map<Player, Long> userPoints = new HashMap<>();
-    
- //       if (players != null) {
-  //          for (Player player : players) {
-                // Hier setzen wir die Punkte des Benutzers auf 0.
- //               userPoints.put(player, 0L);
- //       }
- //   }
-    
- //       leaderboard.setUserPoints(userPoints);
- //       return leaderboard;
- //   }
 
     public void startGame() {
         isOpen = false;
@@ -59,20 +44,6 @@ public class Lobby implements Serializable{
 
     public boolean isOpen() {
         return isOpen;
-    }
-
-    public Game getGame() {
-        return this.game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    private Player convertUserToPlayer(User user) {
-        Player player = new Player(user);
-        // Setzen Sie hier andere Attribute des Players, falls erforderlich.
-        return player;
     }
 
     public void addPlayer(Player player) {
