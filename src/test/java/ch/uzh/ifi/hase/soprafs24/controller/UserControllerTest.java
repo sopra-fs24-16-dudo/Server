@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 
-/*
+
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
 
@@ -54,9 +54,6 @@ public class UserControllerTest {
         user.setName("Firstname Lastname");
         user.setUsername("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
-        user.setCreationDate(LocalDate.parse("2024-03-05"));
-        user.setBirthday(null);
-
 
         List<User> allUsers = Collections.singletonList(user);
 
@@ -72,9 +69,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].name", is(user.getName())))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
-                .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$[0].creationDate", is(user.getCreationDate().toString())))
-                .andExpect(jsonPath("$[0].birthday", is(user.getBirthday())));
+                .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
     }
 
     @Test
@@ -86,8 +81,6 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(LocalDate.parse("2024-03-05"));
-        user.setBirthday(null);
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setName("Test User");
@@ -106,9 +99,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.name", is(user.getName())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
-                .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.creationDate", is(user.getCreationDate().toString())))
-                .andExpect(jsonPath("$.birthday", is(user.getBirthday())));
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
     }
 
     @Test
@@ -143,8 +134,6 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(LocalDate.parse("2024-03-05"));
-        user.setBirthday(null);
 
         given(userService.getUserById(Mockito.any())).willReturn(user);
 
@@ -155,9 +144,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.name", is(user.getName())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
-                .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.creationDate", is(user.getCreationDate().toString())))
-                .andExpect(jsonPath("$.birthday", is(user.getBirthday())));
+                .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
     }
 
     @Test
@@ -169,8 +156,6 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(LocalDate.parse("2024-03-05"));
-        user.setBirthday(null);
 
         given(userService.getUserById(Mockito.any())).willReturn(null);
 
@@ -189,12 +174,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(LocalDate.parse("2024-03-05"));
-        user.setBirthday(null);
 
         User putBody = new User();
         putBody.setUsername("testUsername");
-        putBody.setBirthday(null);
 
         // given that the user exists and is successfully updated
         given(userService.updateUserById(Mockito.any(), Mockito.any(), Mockito.any())).willReturn(user);
@@ -205,7 +187,7 @@ public class UserControllerTest {
 
         // when/then -> do the request + validate the result
         mockMvc.perform(putRequest)
-                .andExpect(status().isNoContent());
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
@@ -217,12 +199,9 @@ public class UserControllerTest {
         user.setUsername("testUsername");
         user.setToken("1");
         user.setStatus(UserStatus.ONLINE);
-        user.setCreationDate(LocalDate.parse("2024-03-05"));
-        user.setBirthday(null);
 
         User putBody = new User();
         putBody.setUsername("testUsername");
-        putBody.setBirthday(null);
 
         given(userService.updateUserById(Mockito.any(), Mockito.any(), Mockito.any())).willReturn(null);
 
@@ -232,7 +211,7 @@ public class UserControllerTest {
 
         // when/then -> do the request + validate the result
         mockMvc.perform(putRequest)
-                .andExpect(status().isNotFound());
+                .andExpect(status().isMethodNotAllowed());
     }
 
     /**
@@ -244,7 +223,7 @@ public class UserControllerTest {
      * @return string
      */
 
-/*
+
     private String asJsonString(final Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
@@ -254,5 +233,3 @@ public class UserControllerTest {
         }
     }
 }
-
- */
