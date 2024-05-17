@@ -1,245 +1,196 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.LobbyService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import java.util.UUID;
 
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.BDDMockito.given;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/*
-
-@WebMvcTest(LobbyController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class LobbyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private LobbyService lobbyService;
 
-    @MockBean
+    @Autowired
     private UserService userService;
 
-    // ObjectMapper for JSON conversions
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @Test
-    public void givenLobbies_whenGetAllLobbies_thenReturnJsonArray() throws Exception {
-        Lobby lobby = new Lobby();
-        lobby.setId(1L);
-        List<Lobby> allLobbies = Arrays.asList(lobby);
-        List<LobbyGetDTO> lobbyGetDTOs = Collections.singletonList(DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
-
-        given(lobbyService.getAllLobbies()).willReturn(allLobbies);
-
-        mockMvc.perform(get("/lobbies"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is((int) lobby.getId())));
+    @BeforeEach
+    public void setup() {
+        // Clear existing data before each test
+        lobbyService.clearAllLobbies();
+        userService.clearAllUsers();
     }
 
-    @Test
-    public void whenCreateLobby_withValidUser_thenCreateLobby() throws Exception {
-        Long userId = 1L;
+    private User createUser(String username, String name) {
         User user = new User();
-        user.setId(userId);
-        Player player = new Player(user);
-        Lobby lobby = new Lobby();
-        lobby.setId(1L);
-
-        // Mock the retrieval of the User.
-        given(userService.getUserById(userId)).willReturn(user);
-
-        // Mock the creation of a Player from a User.
-        given(lobbyService.createPlayer(user)).willReturn(player);
-
-        // Ensure the lobbyService.createLobby is called with the mocked Player.
-        given(lobbyService.createLobby(player)).willReturn(lobby);
-
-        // Mock the API call
-        mockMvc.perform(post("/lobbies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(userId))) // Sending ID as JSON.
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is((int)lobby.getId()))) // Ensure the response has the lobby ID.
-                .andDo(print()); // Print the response for debugging.
+        user.setUsername(username);
+        user.setName(name);
+        user.setToken(UUID.randomUUID().toString());
+        user.setStatus(UserStatus.ONLINE);
+        return userService.createUser(user);
     }
 
+    /*@Test
+    public void getAllLobbies_thenReturnJsonArray() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
+        Player player = new Player(user);
 
-    //REVISED TESTING METHOD
-    //Test: Listing All Lobbies
-    @Test
-    public void whenGetAllLobbies_thenReturnLobbiesList() throws Exception {
-        // Given
-        Lobby lobby1 = new Lobby(1L);
-        Lobby lobby2 = new Lobby(2L);
-        List<Lobby> lobbies = List.of(lobby1, lobby2);
-        given(lobbyService.getAllLobbies()).willReturn(lobbies);
+        Lobby lobby = lobbyService.createLobby(player);
 
-        // When & Then
+        // when
         mockMvc.perform(get("/lobbies").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[1].id", is(2)));
-    }
-    //Test: Create a New Lobby
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(lobby.getId())));
+    }*/
+
     @Test
-    public void whenCreateLobby_thenReturnLobby() throws Exception {
-        // Given
-        User user = new User();
-        user.setId(1L);
-        Player player = new Player(user);
-        Lobby lobby = new Lobby(3L);
+    public void createLobby_validInput_lobbyCreated() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
 
-        given(userService.getUserById(Mockito.any())).willReturn(user);
-        given(lobbyService.createPlayer(Mockito.any(User.class))).willReturn(player);
-        given(lobbyService.createLobby(Mockito.any(Player.class))).willReturn(lobby);
-
-        // When & Then
+        // when/then
         mockMvc.perform(post("/lobbies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(1L))) // Serialize the input as JSON
+                        .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(3))); // Ensure the ID is returned as expected
+                .andExpect(jsonPath("$.adminId", is(user.getId().intValue())));
     }
-    //Test: Add Player to Lobby
+
     @Test
-    public void whenAddPlayerToLobby_ifPlayerNotInLobby_thenAddPlayer() throws Exception {
-        // Given
-        User user = new User();
-        user.setId(2L);
+    public void addPlayerToLobby_validInput_noContent() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
         Player player = new Player(user);
 
-        given(userService.getUserById(Mockito.anyLong())).willReturn(user);
-        given(lobbyService.createPlayer(Mockito.any(User.class))).willReturn(player);
-        given(lobbyService.playerInLobby(Mockito.anyLong(), Mockito.any(Player.class))).willReturn(false);
-        given(lobbyService.addPlayer(Mockito.anyLong(), Mockito.any(Player.class))).willReturn(new Lobby(1L));
+        Lobby lobby = lobbyService.createLobby(player);
 
-        // When & Then
-        mockMvc.perform(put("/lobby/players/{lobbyId}", 1L)
+        // when/then
+        mockMvc.perform(put("/lobby/players/" + lobby.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(2L)))
+                        .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isNoContent());
     }
 
-    @Test
-    public void whenAddPlayerToLobby_ifPlayerAlreadyInLobby_thenThrowException() throws Exception {
-        // Given
-        User user = new User();
-        user.setId(2L);
+    /*@Test
+    public void getPlayersFromLobby_thenReturnJsonArray() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
         Player player = new Player(user);
 
-        given(userService.getUserById(Mockito.anyLong())).willReturn(user);
-        given(lobbyService.createPlayer(Mockito.any(User.class))).willReturn(player);
-        given(lobbyService.playerInLobby(Mockito.anyLong(), Mockito.any(Player.class))).willReturn(true);
+        Lobby lobby = lobbyService.createLobby(player);
+        lobbyService.addPlayer(lobby.getId(), player);
 
-        // When & Then
-        mockMvc.perform(put("/lobby/players/{lobbyId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(2L)))
-                .andExpect(status().isConflict());
-    }
-
-    //Test: Remove Player from Lobby
-    @Test
-    public void whenRemovePlayerFromLobby_thenRemovePlayer() throws Exception {
-        // Given
-        Lobby lobby = new Lobby(1L);
-        User u1 = new User();
-        User u2 = new User();
-        u1.setId(3L);
-        u2.setId(4L);
-        Player p1 = new Player(u1);
-        Player p2 = new Player(u2);
-        lobby.addPlayer(p1);
-        lobby.addPlayer(p2);
-
-        given(lobbyService.getLobbyById(Mockito.anyLong())).willReturn(lobby);
-        given(lobbyService.removePlayer(Mockito.any(Lobby.class), Mockito.anyLong())).willReturn(lobby);
-
-        // When & Then
-        mockMvc.perform(post("/lobby/exit/{lobbyId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("3"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void whenRemovePlayerFromLobby_ifLobbyNotFound_thenReturnNotFound() throws Exception {
-        // Given
-        given(lobbyService.getLobbyById(Mockito.anyLong())).willThrow(new IllegalArgumentException("Lobby not found"));
-
-        // When & Then
-        mockMvc.perform(post("/lobby/exit/{lobbyId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("3"))
-                .andExpect(status().isConflict());
-    }
-    @Test
-    public void whenUpdateUserReadyStatus_thenUpdateStatus() throws Exception {
-        // Given
-        Lobby lobby = new Lobby(1L);
-        User u1 = new User();
-        u1.setId(4L);
-        Player player = new Player(u1);
-        lobby.addPlayer(player);
-
-        given(lobbyService.getLobbyById(Mockito.anyLong())).willReturn(lobby);
-        doNothing().when(lobbyService).updatePlayerReadyStatus(Mockito.any(Player.class));
-
-        // When & Then
-        mockMvc.perform(put("/lobby/player/{lobbyId}/ready", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("4"))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void whenAreAllPlayersReady_thenReturnStatus() throws Exception {
-        User u1 = new User();
-        u1.setId(1L);
-        Player p1 = new Player(u1);
-        p1.setReady(true);
-
-        User u2 = new User();
-        u2.setId(2L);
-        Player p2 = new Player(u2);
-        p2.setReady(true);
-        // Given
-        given(lobbyService.allPlayersReady(Mockito.anyLong())).willReturn(true);
-        given(lobbyService.getPlayersInLobby(Mockito.anyLong())).willReturn(List.of(p1, p2));
-
-        // When & Then
-        mockMvc.perform(get("/lobby/player/{lobbyId}/ready", 1L)
+        // when/then
+        mockMvc.perform(get("/lobby/players/" + lobby.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is(true)));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].user.username", is(user.getUsername())));
+    }*/
+
+    @Test
+    public void exitLobby_validInput_noContent() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
+        Player player = new Player(user);
+
+        Lobby lobby = lobbyService.createLobby(player);
+        lobbyService.addPlayer(lobby.getId(), player);
+
+        // when/then
+        mockMvc.perform(post("/lobby/exit/" + lobby.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player.getId())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void kickPlayerFromLobby_validInput_noContent() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
+        Player player = new Player(user);
+
+        Lobby lobby = lobbyService.createLobby(player);
+        lobbyService.addPlayer(lobby.getId(), player);
+
+        // when/then
+        mockMvc.perform(post("/lobby/kick/" + lobby.getId() + "/" + user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player.getId())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateUserReadyStatus_validInput_noContent() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
+        Player player = new Player(user);
+
+        Lobby lobby = lobbyService.createLobby(player);
+        lobbyService.addPlayer(lobby.getId(), player);
+
+        // when/then
+        mockMvc.perform(put("/lobby/player/" + lobby.getId() + "/ready")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user.getId())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void postMessage_validInput_noContent() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
+
+        Lobby lobby = new Lobby();
+        lobbyService.saveLobby(lobby);
+
+        // when/then
+        mockMvc.perform(post("/lobby/chat/" + lobby.getId() + "/" + user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString("Hello, World!")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getChatMessages_thenReturnJsonArray() throws Exception {
+        // given
+        User user = createUser("testUser", "Test User");
+
+        Lobby lobby = new Lobby();
+        lobbyService.saveLobby(lobby);
+        lobbyService.postMessage(lobby.getId(), "Hello, World!");
+
+        // when/then
+        mockMvc.perform(get("/lobby/chat/" + lobby.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0]", is("Hello, World!")));
     }
 }
-
- */

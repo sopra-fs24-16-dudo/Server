@@ -174,4 +174,17 @@ public class Lobby implements Serializable{
         return game.getRound().getState() instanceof FijoState;
     }
 
+    // New methods for testing
+    public void postMessage(String message) {
+        chat.addMessage(message);
+    }
+
+    public List<String> getChatMessages() {
+        return chat.getMessages();
+    }
+
+    public void setPlayers(LinkedHashMap<Long, Player> players) {
+        this.players = players;
+    }
+
 }

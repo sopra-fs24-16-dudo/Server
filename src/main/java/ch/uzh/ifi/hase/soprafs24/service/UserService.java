@@ -118,4 +118,9 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
     }
   }
+
+  //Helper methods for the testing.
+  public void clearAllUsers() {
+      userRepository.deleteAll();
+  }
 }

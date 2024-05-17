@@ -44,4 +44,9 @@ public class LobbyManager {
         }
         return maxId + 1;
     }
+
+    // New methods for clearing all lobbies and resetting ID counter
+    public void clearAllLobbies() {
+        lobbies.clear();
+    }
 }

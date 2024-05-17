@@ -227,5 +227,14 @@ public class LobbyService {
         return lobby.getLeaderboard();
     }
 
+    // Methods for testing
+    public void clearAllLobbies() {
+        lobbyManager.clearAllLobbies();
+    }
+
+    public void saveLobby(Lobby lobby) {
+        lobbyManager.addLobby(lobby);
+    }
+
 
 }
