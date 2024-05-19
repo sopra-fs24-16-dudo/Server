@@ -179,12 +179,10 @@ public class GameController {
     @PutMapping("/games/end/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void endGame(@PathVariable Long lobbyId, @RequestBody Long userId) {
+    public void endGame(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         Player winner = lobby.getWinner();
-        if (winner.getId() == userId){
-            lobby.updatePoints(winner);
-        }
+        lobby.updatePoints(winner);
     }
 
     @GetMapping("/games/fijoCheck/{lobbyId}")
