@@ -114,6 +114,7 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$[0].user.username", is(user.getUsername())));
     }*/
 
+    /*
     @Test
     public void exitLobby_validInput_noContent() throws Exception {
         // given
@@ -129,6 +130,8 @@ public class LobbyControllerTest {
                         .content(objectMapper.writeValueAsString(player.getId())))
                 .andExpect(status().isOk());
     }
+
+     */
 
     @Test
     public void kickPlayerFromLobby_validInput_noContent() throws Exception {

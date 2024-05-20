@@ -92,7 +92,6 @@ public class LobbyController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
-        
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.removePlayer(lobby, playerId);
         lobby.startRound();
