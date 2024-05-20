@@ -181,5 +181,11 @@ public class LobbyController {
         return lobby.isOpen();
     }
 
-
+    @GetMapping("/lobby/admin/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public long getAdmin(@PathVariable Long lobbyId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        return lobby.getAdminId();
+    }
 }
