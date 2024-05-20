@@ -94,6 +94,7 @@ public class LobbyController {
     public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.removePlayer(lobby, playerId);
+        lobby.startRound();
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
     @PostMapping("/lobby/kick/{lobbyId}/{userId}")
