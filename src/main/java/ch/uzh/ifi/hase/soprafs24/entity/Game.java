@@ -35,7 +35,7 @@ public class Game implements Serializable {
     }
 
     public void playRound() {
-        if (startingPlayer == null) {
+        if (startingPlayer == null || !players.containsKey(startingPlayer.getId())){
             startingPlayer = getPlayers().get(0);
         }
         startingPlayer = calculateStartingPlayer();
