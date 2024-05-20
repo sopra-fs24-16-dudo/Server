@@ -187,4 +187,7 @@ public class Lobby implements Serializable{
         this.players = players;
     }
 
+    public void open() {
+        isOpen = true;
+    }
 }

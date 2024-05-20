@@ -95,6 +95,9 @@ public class LobbyController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.removePlayer(lobby, playerId);
         lobby.startRound();
+        if (lobby.getPlayersList().size() == 1) {
+            lobby.open();
+        }
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
     @PostMapping("/lobby/kick/{lobbyId}/{userId}")
