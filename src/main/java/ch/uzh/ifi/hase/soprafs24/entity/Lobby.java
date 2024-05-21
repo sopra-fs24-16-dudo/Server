@@ -190,4 +190,8 @@ public class Lobby implements Serializable{
     public void open() {
         isOpen = true;
     }
+
+    public Game getGame() {
+        return this.game;
+    }
 }

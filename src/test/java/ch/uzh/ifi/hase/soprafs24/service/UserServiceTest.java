@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/*
+
 public class UserServiceTest {
 
     @Mock
@@ -55,7 +55,7 @@ public class UserServiceTest {
         assertEquals(UserStatus.ONLINE, createdUser.getStatus());
     }
 
-    @Test
+    /*@Test
     public void createUser_duplicateName_throwsException() {
         // given -> a first user has already been created
         userService.createUser(testUser);
@@ -67,7 +67,7 @@ public class UserServiceTest {
         // then -> attempt to create second user with same user -> check that an error
         // is thrown
         assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
-    }
+    }*/
 
     @Test
     public void createUser_duplicateInputs_throwsException() {
@@ -85,4 +85,3 @@ public class UserServiceTest {
 
 }
 
- */

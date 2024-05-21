@@ -49,6 +49,9 @@ public class GameController {
     public Hand rollHand(@PathVariable Long lobbyId, @RequestBody Long userId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         Player player = lobby.getPlayerById(userId);
+        if (player == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No such player in game");
+        }
         if (player.hasRolled()){
             return player.getHand();
         }
@@ -104,6 +107,9 @@ public class GameController {
     public int getCurrentPlayer(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         Player currentPlayer = lobby.getRound().getCurrentPlayer();
+        if (currentPlayer == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No such player in game");
+        }
         return (int) currentPlayer.getId();
     }
 
@@ -174,6 +180,9 @@ public class GameController {
     @ResponseBody
     public String getHands(@PathVariable Long lobbyId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        if (lobby.getHands() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Hand not found");
+        }
         return lobby.getHands().toString();
     }
     @PutMapping("/games/end/{lobbyId}")

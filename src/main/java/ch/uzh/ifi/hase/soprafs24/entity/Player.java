@@ -52,6 +52,10 @@ public class Player {
         return hand;
     }
 
+    public void setHand(Hand hand) {
+        this.hand = hand;
+    }
+
     public void subtractChip(){
         chips--;
     }
