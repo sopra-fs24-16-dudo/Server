@@ -94,7 +94,6 @@ public class LobbyController {
     public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         lobbyService.removePlayer(lobby, playerId);
-        lobby.startRound();
         if (lobby.getPlayersList().size() == 1) {
             lobby.open();
         }

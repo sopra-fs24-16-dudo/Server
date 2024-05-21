@@ -202,4 +202,19 @@ public class GameController {
         return lobby.isFijo();
     }
 
+    @PostMapping("/games/exit/{lobbyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
+        Lobby lobby = lobbyService.getLobbyById(lobbyId);
+        lobbyService.removePlayer(lobby, playerId);
+        if (lobby.getPlayersList().size() > 1) {
+            lobby.startRound();
+        }
+        if (lobby.getPlayersList().size() == 1) {
+            lobby.open();
+        }
+        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
+    }
+
 }
