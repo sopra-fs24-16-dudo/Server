@@ -191,4 +191,16 @@ public class LobbyController {
         Lobby lobby = lobbyService.getLobbyById(lobbyId);
         return lobby.getAdminId();
     }
+
+    @GetMapping("/user/{userId}/lobby")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<Long> getUserLobby(@PathVariable Long userId) {
+        Long lobbyId = lobbyService.findLobbyByUserId(userId);
+        if (lobbyId != null) {
+            return ResponseEntity.ok(lobbyId);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 }

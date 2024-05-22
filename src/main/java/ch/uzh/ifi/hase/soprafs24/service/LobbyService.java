@@ -233,5 +233,14 @@ public class LobbyService {
         lobbyManager.addLobby(lobby);
     }
 
+    public Long findLobbyByUserId(Long userId) {
+        for (Lobby lobby : getAllLobbies()) {
+            if (lobby.getPlayers().containsKey(userId)) {
+                return lobby.getId();
+            }
+        }
+        return null;
+    }
+
 
 }
