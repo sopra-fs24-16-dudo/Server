@@ -192,7 +192,7 @@ public class LobbyController {
         return lobby.getAdminId();
     }
 
-    @GetMapping("/user/{userId}/lobby")
+    @GetMapping("/users/{userId}/lobby")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<Long> getUserLobby(@PathVariable Long userId) {
