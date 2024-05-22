@@ -87,6 +87,7 @@ class LeaderboardTest {
         leaderboard.addPoints(player2, 5L);
 
         String expected = "user2 5,user1 10";
+
         assertEquals(expected, leaderboard.toString());
     }
 
