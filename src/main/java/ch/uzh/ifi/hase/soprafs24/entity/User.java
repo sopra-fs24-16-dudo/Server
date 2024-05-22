@@ -29,16 +29,6 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private int gamesPlayed;
-
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_voice_channel",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "voice_channel_id")
-    )
-    private Set<VoiceChannel> voiceChannels;
-
     // getters and setters...
 
 

@@ -7,7 +7,6 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyPostDTO;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.entity.VoiceChannel;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
