@@ -45,13 +45,10 @@ public class LobbyService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private VoiceChannelService voiceChannelService;
-
 
     public LobbyService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.lobbyManager = new LobbyManager();
-        this.voiceChannelService = voiceChannelService;
     }
 
     public Lobby getLobbyById(Long lobbyId) {
