@@ -32,6 +32,10 @@ public class Leaderboard {
         }
     }
 
+    public Map<Player, Long> getUserPoints() {
+        return new HashMap<>(userPoints);
+    }
+
     @Override
     public String toString() {
         return this.userPoints.entrySet().stream()
