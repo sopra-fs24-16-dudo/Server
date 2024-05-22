@@ -1,24 +1,38 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import ch.uzh.ifi.hase.soprafs24.entity.Bid;
-import ch.uzh.ifi.hase.soprafs24.entity.Dice;
-import ch.uzh.ifi.hase.soprafs24.entity.Player;
+import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
-import ch.uzh.ifi.hase.soprafs24.entity.Suit;
-import ch.uzh.ifi.hase.soprafs24.entity.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LibreStateTest {
+
+    private LibreState state;
+    private User user1;
+    private User user2;
+    private Player player1;
+    private Player player2;
+
+    @BeforeEach
+    void setUp() {
+        state = new LibreState();
+        user1 = new User();
+        user1.setId(1L);
+        user2 = new User();
+        user2.setId(2L);
+        player1 = new Player(user1);
+        player2 = new Player(user2);
+    }
+
     @Test
     void testPlaceBid_Valid() {
-        LibreState state = new LibreState();
         List<Bid> validBids = List.of(new Bid(Suit.ACE, 2L));
         Bid bid = new Bid(Suit.ACE, 2L);
 
@@ -28,7 +42,6 @@ class LibreStateTest {
 
     @Test
     void testPlaceBid_Invalid() {
-        LibreState state = new LibreState();
         List<Bid> validBids = List.of(new Bid(Suit.ACE, 3L));
         Bid bid = new Bid(Suit.ACE, 2L);
 
@@ -36,62 +49,105 @@ class LibreStateTest {
     }
 
     @Test
-    void testDudo_CorrectPlayerWins() {
-        LibreState state = new LibreState();
-        Bid currentBid = new Bid(Suit.ACE, 5L);
-        Map<Suit, Long> suitCounter = new HashMap<>();
-        suitCounter.put(Suit.ACE, 4L);
+    void testDudo_PlayerWins() {
+        Bid currentBid = new Bid(Suit.ACE, 2L);
+        Map<Suit, Long> suitCounter = Map.of(Suit.ACE, 3L);
 
-        User u1 = new User();
-        u1.setId(1L);
-        u1.setUsername("last");
+        Long result = state.dudo(currentBid, suitCounter, player1, player2);
 
-        User u2 = new User();
-        u2.setId(2L);
-        u2.setUsername("last");
-        Player currentPlayer = new Player(u1);
-        Player lastPlayer = new Player(u2);
-
-        Long winnerId = state.dudo(currentBid, suitCounter, currentPlayer, lastPlayer);
-        assertEquals(lastPlayer.getId(), winnerId, "Last player should win when the bid is too high");
-    }
-
-    /*@Test
-    void testGetValidBids_NullCurrentBid() {
-        LibreState state = new LibreState();
-        User u1 = new User();
-        u1.setId(1L);
-        u1.setUsername("bidder");
-        Player bidder = new Player(u1);
-        List<Bid> result = state.getValidBids(new Bid(Suit.ACE, 1L), bidder, 2L);
-
-        assertFalse(result.isEmpty(), "Should generate initial valid bids");
-        assertTrue(result.contains(new Bid(Suit.ACE, 1L)), "Should include ace bids");
-    }*/
-
-    /*@Test
-    void testGetSuitCounter_CorrectCounts() {
-        LibreState state = new LibreState();
-        List<Player> players = List.of(
-                new Player(new User(1L, "Alice"), List.of(new Dice(Suit.ACE), new Dice(Suit.getSuit("HEARTS")))),
-                new Player(new User(2L, "Bob"), List.of(new Dice(Suit.ACE), new Dice(Suit.SPADES)))
-        );
-
-        Map<Suit, Long> counts = state.getSuitCounter(players);
-        assertEquals(2, counts.get(Suit.ACE).longValue(), "Aces should be counted correctly for all suits");
-        assertEquals(1, counts.get(Suit.HEARTS).longValue(), "Hearts should be counted correctly");
-        assertEquals(1, counts.get(Suit.SPADES).longValue(), "Spades should be counted correctly");
+        assertEquals(player1.getId(), result, "Current player should win when total amount is greater than or equal to bid amount");
     }
 
     @Test
-    void testGetNextBid_IncrementBid() {
-        LibreState state = new LibreState();
-        Bid currentBid = new Bid(Suit.HEARTS, 2L);
-        Player bidder = new Player(new User(1L, "bidder"));
+    void testDudo_LastPlayerWins() {
+        Bid currentBid = new Bid(Suit.ACE, 2L);
+        Map<Suit, Long> suitCounter = Map.of(Suit.ACE, 1L);
 
-        Bid nextBid = state.getNextBid(currentBid, bidder, 3L);
-        assertEquals(3L, nextBid.getAmount(), "The next bid amount should be incremented");
-    }*/
+        Long result = state.dudo(currentBid, suitCounter, player1, player2);
+
+        assertEquals(player2.getId(), result, "Last player should win when total amount is less than bid amount");
+    }
+
+    @Test
+    void testGetValidBids_NoCurrentBid() {
+        Bid currentBid = new Bid(null, null);
+        Long playerSize = 3L;
+
+        List<Bid> validBids = state.getValidBids(currentBid, player1, playerSize);
+
+        assertEquals(90, validBids.size(), "Valid bids should be generated for each suit and value from 1 to 5 times the player size");
+    }
+
+    @Test
+    void testGetValidBids_SingleChip() {
+        player1.setChips(1);
+        Bid currentBid = new Bid(Suit.ACE, 1L);
+        Long playerSize = 3L;
+
+        List<Bid> validBids = state.getValidBids(currentBid, player1, playerSize);
+
+        assertFalse(validBids.isEmpty(), "Valid bids should be generated for single chip player");
+    }
+
+    @Test
+    void testGetValidBids_MultipleChips() {
+        player1.setChips(2);
+        Bid currentBid = new Bid(Suit.ACE, 1L);
+        Long playerSize = 3L;
+
+        List<Bid> validBids = state.getValidBids(currentBid, player1, playerSize);
+
+        assertFalse(validBids.isEmpty(), "Valid bids should be generated for multiple chips player");
+    }
+
+    @Test
+    void testGetValidBids_SpecialRules() {
+        Bid currentBid = new Bid(Suit.ACE, 2L);
+        Long playerSize = 3L;
+
+        List<Bid> validBids = state.getValidBids(currentBid, player1, playerSize);
+
+        assertTrue(validBids.stream().anyMatch(bid -> bid.getSuit() == Suit.ACE && bid.getAmount() > 2L), "Valid bids should include ACE suit with special rules");
+        assertTrue(validBids.stream().anyMatch(bid -> bid.getSuit() != Suit.ACE && bid.getAmount() >= 4L), "Valid bids should include non-ACE suit with special rules");
+    }
+
+    @Test
+    void testGetNextBid_NoCurrentBid() {
+        Bid currentBid = new Bid(null, null);
+        Long playerSize = 3L;
+
+        Bid nextBid = state.getNextBid(currentBid, player1, playerSize);
+
+        assertEquals(new Bid(Suit.NINE, 1L), nextBid, "Next bid should be the minimum bid when no current bid exists");
+    }
+
+    @Test
+    void testGetNextBid_MaxAmount() {
+        Bid currentBid = new Bid(Suit.ACE, 1L);
+        Long playerSize = 3L;
+
+        Bid nextBid = state.getNextBid(currentBid, player1, playerSize);
+
+        assertNotNull(nextBid, "Next bid should not be null if valid bids are available");
+    }
+
+    @Test
+    void testGetNextBid_NoValidBids() {
+        Bid currentBid = new Bid(Suit.ACE, 20L);
+        Long playerSize = 3L;
+
+        Bid nextBid = state.getNextBid(currentBid, player1, playerSize);
+
+        assertNull(nextBid, "Next bid should be null if no valid bids are available");
+    }
+
+    @Test
+    void testGetNextBid_IncreaseAmount() {
+        Bid currentBid = new Bid(Suit.ACE, 2L);
+        Long playerSize = 3L;
+
+        Bid nextBid = state.getNextBid(currentBid, player1, playerSize);
+
+        assertEquals(new Bid(Suit.ACE, 3L), nextBid, "Next bid should increase the amount by 1");
+    }
 }
-
-
