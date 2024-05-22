@@ -1,7 +1,7 @@
-package ch.uzh.ifi.hase.soprafs24.service;
+package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.entity.*;
-import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
+import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FijoStateTest {
+class LibreStateTest {
 
-    private FijoState state;
+    private LibreState state;
     private User user1;
     private User user2;
     private Player player1;
@@ -22,7 +22,7 @@ class FijoStateTest {
 
     @BeforeEach
     void setUp() {
-        state = new FijoState();
+        state = new LibreState();
         user1 = new User();
         user1.setId(1L);
         user2 = new User();
@@ -98,6 +98,17 @@ class FijoStateTest {
         List<Bid> validBids = state.getValidBids(currentBid, player1, playerSize);
 
         assertFalse(validBids.isEmpty(), "Valid bids should be generated for multiple chips player");
+    }
+
+    @Test
+    void testGetValidBids_SpecialRules() {
+        Bid currentBid = new Bid(Suit.ACE, 2L);
+        Long playerSize = 3L;
+
+        List<Bid> validBids = state.getValidBids(currentBid, player1, playerSize);
+
+        assertTrue(validBids.stream().anyMatch(bid -> bid.getSuit() == Suit.ACE && bid.getAmount() > 2L), "Valid bids should include ACE suit with special rules");
+        assertTrue(validBids.stream().anyMatch(bid -> bid.getSuit() != Suit.ACE && bid.getAmount() >= 4L), "Valid bids should include non-ACE suit with special rules");
     }
 
     @Test
