@@ -76,8 +76,10 @@ public class FijoState implements RoundState {
             suitCounter.put(suit, 0L);
         }
         for (Player player : players) {
-            for (Dice dice : player.getHand().getDices()) {
-                suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
+            if (player.getChips() > 0) {
+                for (Dice dice : player.getHand().getDices()) {
+                    suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
+                }
             }
         }
         return suitCounter;

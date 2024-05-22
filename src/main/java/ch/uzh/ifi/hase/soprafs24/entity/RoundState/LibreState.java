@@ -72,12 +72,14 @@ public class LibreState implements RoundState {
             suitCounter.put(suit, 0L);
         }
         for (Player player : players) {
-            for (Dice dice : player.getHand().getDices()) {
-                if (dice.getSuit() != Suit.ACE)
-                    suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
-                if (dice.getSuit() == Suit.ACE) {
-                    for (Suit suit : Suit.values()) {
-                        suitCounter.put(suit, suitCounter.get(suit) + 1);
+            if (player.getChips() > 0) {
+                for (Dice dice : player.getHand().getDices()) {
+                    if (dice.getSuit() != Suit.ACE)
+                        suitCounter.put(dice.getSuit(), suitCounter.get(dice.getSuit()) + 1);
+                    if (dice.getSuit() == Suit.ACE) {
+                        for (Suit suit : Suit.values()) {
+                            suitCounter.put(suit, suitCounter.get(suit) + 1);
+                        }
                     }
                 }
             }
