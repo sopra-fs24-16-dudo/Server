@@ -239,7 +239,7 @@ public class LobbyService {
                 return lobby.getId();
             }
         }
-        return null;
+        return 0L;
     }
 
 
