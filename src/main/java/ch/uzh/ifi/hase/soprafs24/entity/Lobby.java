@@ -14,7 +14,6 @@ public class Lobby implements Serializable{
     private boolean isOpen;
 
     private long adminId;
-    private Chat chat = new Chat();
 
     private Leaderboard leaderboard;
 
@@ -54,9 +53,6 @@ public class Lobby implements Serializable{
         players.remove(playerId);
     }
 
-    public Chat getChat() {
-        return chat;
-    }
 
     public long getId() {
         return id;
@@ -162,14 +158,6 @@ public class Lobby implements Serializable{
 
     public boolean isFijo() {
         return game.getRound().getState() instanceof FijoState;
-    }
-
-    public void postMessage(String message) {
-        chat.addMessage(message);
-    }
-
-    public List<String> getChatMessages() {
-        return chat.getMessages();
     }
 
     public void setPlayers(LinkedHashMap<Long, Player> players) {

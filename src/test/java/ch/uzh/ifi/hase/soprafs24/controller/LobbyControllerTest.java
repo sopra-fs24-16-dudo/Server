@@ -164,38 +164,4 @@ public class LobbyControllerTest {
                         .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isOk());
     }
-/*
-    @Test
-    public void postMessage_validInput_noContent() throws Exception {
-        // given
-        User user = createUser("testUser", "Test User");
-
-        Lobby lobby = new Lobby();
-        lobbyService.saveLobby(lobby);
-
-        // when/then
-        mockMvc.perform(post("/lobbies/chat/" + lobby.getId() + "/" + user.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString("Hello, World!")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void getChatMessages_thenReturnJsonArray() throws Exception {
-        // given
-        User user = createUser("testUser", "Test User");
-
-        Lobby lobby = new Lobby();
-        lobbyService.saveLobby(lobby);
-        lobbyService.postMessage(lobby.getId(), "Hello, World!");
-
-        // when/then
-        mockMvc.perform(get("/lobbies/chat/" + lobby.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0]", is("Hello, World!")));
-    }
-    
- */
 }

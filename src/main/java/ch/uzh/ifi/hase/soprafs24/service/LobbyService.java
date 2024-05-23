@@ -149,16 +149,6 @@ public class LobbyService {
         }return true;
     }
 
-    public void postMessage(long lobbyId, String message) {
-        Lobby lobby = lobbyManager.getLobby(lobbyId);
-        lobby.getChat().addMessage(message);
-    }
-
-    public List<String> getMessages(long lobbyId) {
-        Lobby lobby = lobbyManager.getLobby(lobbyId);
-        return lobby.getChat().getMessages();
-    }
-
     public List<String> getRules() {
         return RULES;
     }

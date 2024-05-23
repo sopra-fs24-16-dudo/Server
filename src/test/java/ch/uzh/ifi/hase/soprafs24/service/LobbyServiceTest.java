@@ -149,26 +149,6 @@ public class LobbyServiceTest {
     }
 
     @Test
-    public void postMessage_messageAdded() {
-        String message = "Test message";
-        lobbyService.postMessage(1L, message);
-
-        assertTrue(testLobby.getChat().getMessages().contains(message));
-    }
-
-    @Test
-    public void getMessages_messagesReturned() {
-        List<String> messages = List.of("Message 1", "Message 2");
-        for (String message : messages) {
-            testLobby.getChat().addMessage(message);
-        }
-
-        List<String> returnedMessages = lobbyService.getMessages(1L);
-        assertEquals(messages.size(), returnedMessages.size());
-        assertEquals(messages, returnedMessages);
-    }
-
-    @Test
     public void startGame_gameStarted() {
         lobbyService.startGame(1L);
 
