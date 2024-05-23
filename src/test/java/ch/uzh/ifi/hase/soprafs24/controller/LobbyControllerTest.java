@@ -91,7 +91,7 @@ public class LobbyControllerTest {
         Lobby lobby = lobbyService.createLobby(player);
 
         // when/then
-        mockMvc.perform(put("/lobby/players/" + lobby.getId())
+        mockMvc.perform(put("/lobbies/players/" + lobby.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isNoContent());
@@ -143,7 +143,7 @@ public class LobbyControllerTest {
         lobbyService.addPlayer(lobby.getId(), player);
 
         // when/then
-        mockMvc.perform(post("/lobby/kick/" + lobby.getId() + "/" + user.getId())
+        mockMvc.perform(post("/lobbies/kick/" + lobby.getId() + "/" + user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(player.getId())))
                 .andExpect(status().isOk());
@@ -159,7 +159,7 @@ public class LobbyControllerTest {
         lobbyService.addPlayer(lobby.getId(), player);
 
         // when/then
-        mockMvc.perform(put("/lobby/player/" + lobby.getId() + "/ready")
+        mockMvc.perform(put("/lobbies/player/" + lobby.getId() + "/ready")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isOk());
@@ -174,7 +174,7 @@ public class LobbyControllerTest {
         lobbyService.saveLobby(lobby);
 
         // when/then
-        mockMvc.perform(post("/lobby/chat/" + lobby.getId() + "/" + user.getId())
+        mockMvc.perform(post("/lobbies/chat/" + lobby.getId() + "/" + user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString("Hello, World!")))
                 .andExpect(status().isOk());
@@ -190,7 +190,7 @@ public class LobbyControllerTest {
         lobbyService.postMessage(lobby.getId(), "Hello, World!");
 
         // when/then
-        mockMvc.perform(get("/lobby/chat/" + lobby.getId())
+        mockMvc.perform(get("/lobbies/chat/" + lobby.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
