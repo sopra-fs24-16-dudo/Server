@@ -1,5 +1,4 @@
-
-![image](https://github.com/sopra-fs24-16-dudo/Server/assets/160472898/14e40673-b149-4d5d-af74-86512ce6a17f)
+![image](https://github.com/sopra-fs24-16-dudo/Server/assets/160472898/959584f6-4500-4d72-acd9-9a7ca002bf02)
 
 ## Introduction
 
