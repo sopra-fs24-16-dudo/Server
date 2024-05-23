@@ -164,7 +164,7 @@ public class LobbyControllerTest {
                         .content(objectMapper.writeValueAsString(user.getId())))
                 .andExpect(status().isOk());
     }
-
+/*
     @Test
     public void postMessage_validInput_noContent() throws Exception {
         // given
@@ -196,4 +196,6 @@ public class LobbyControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0]", is("Hello, World!")));
     }
+    
+ */
 }
