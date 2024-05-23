@@ -3,8 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
-
-import javax.swing.plaf.nimbus.State;
 import java.util.List;
 import java.util.Map;
 

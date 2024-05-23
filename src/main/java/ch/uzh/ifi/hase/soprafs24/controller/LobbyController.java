@@ -63,7 +63,7 @@ public class LobbyController {
         return DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby);
     }
 
-    @PutMapping("/lobby/players/{lobbyId}")
+    @PutMapping("/lobbies/players/{lobbyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public ResponseEntity<?> addPlayerToLobby(@PathVariable Long lobbyId, @RequestBody Long newUser) {
@@ -81,14 +81,14 @@ public class LobbyController {
         return ResponseEntity.noContent().build(); 
     }
 
-    @GetMapping("/lobby/players/{lobbyId}")
+    @GetMapping("/lobbies/players/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<Player> getPlayersFromLobby(@PathVariable Long lobbyId) {
         return lobbyService.getPlayersInLobby(lobbyId);
     }
 
-    @PostMapping("/lobby/exit/{lobbyId}")
+    @PostMapping("/lobbies/exit/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void exitLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
@@ -99,7 +99,7 @@ public class LobbyController {
         }
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
-    @PostMapping("/lobby/kick/{lobbyId}/{userId}")
+    @PostMapping("/lobbies/kick/{lobbyId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void kickPlayerFromLobby(@PathVariable Long lobbyId, @RequestBody Long playerId) {
@@ -108,7 +108,7 @@ public class LobbyController {
         lobbyService.removePlayer(lobby, playerId);
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
-    @PutMapping("/lobby/player/{lobbyId}/ready")
+    @PutMapping("/lobbies/player/{lobbyId}/ready")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void updateUserReadyStatus(@PathVariable Long lobbyId, @RequestBody Long userId) {
@@ -117,27 +117,12 @@ public class LobbyController {
         lobbyService.updatePlayerReadyStatus(player);
         messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId, DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(lobby));
     }
-    @GetMapping("/lobby/player/{lobbyId}/ready")
+    @GetMapping("/lobbies/player/{lobbyId}/ready")
     public ResponseEntity<Boolean> areAllPlayerReady(@PathVariable Long lobbyId) {
         boolean allUsersReady = lobbyService.allPlayersReady(lobbyId);
         return ResponseEntity.ok(allUsersReady && lobbyService.getPlayersInLobby(lobbyId).size() > 1);
     }
 
-    @PostMapping("/lobby/chat/{lobbyId}/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void postMessage(@PathVariable Long lobbyId,@PathVariable Long userId, @RequestBody String message) {
-        User user = userService.getUserById(userId);
-        String MyMessage = user.getUsername() + ": " + message;
-        lobbyService.postMessage(lobbyId, MyMessage);
-    }
-
-    @GetMapping("/lobby/chat/{lobbyId}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<String> getChatMessages(@PathVariable Long lobbyId) {
-        return lobbyService.getMessages(lobbyId);
-    }
 
     @GetMapping("/rules")
     @ResponseStatus(HttpStatus.OK)
@@ -146,7 +131,7 @@ public class LobbyController {
         return lobbyService.getRules();
     }
 
-    @PostMapping("/lobby/start/{lobbyId}")
+    @PostMapping("/lobbies/start/{lobbyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void gameStarter(@PathVariable Long lobbyId) {
@@ -161,7 +146,7 @@ public class LobbyController {
 
     }
 
-    @GetMapping("/lobby/{lobbyId}/round")
+    @GetMapping("/lobbies/{lobbyId}/round")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public String getRound(@PathVariable Long lobbyId) {
@@ -176,7 +161,7 @@ public class LobbyController {
         return lobbyService.getLeaderboard(lobby).toString();
     }
 
-    @GetMapping("/lobby/availability/{lobbyId}")
+    @GetMapping("/lobbies/availability/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public boolean isLobbyOpen(@PathVariable Long lobbyId) {
@@ -184,7 +169,7 @@ public class LobbyController {
         return lobby.isOpen();
     }
 
-    @GetMapping("/lobby/admin/{lobbyId}")
+    @GetMapping("/lobbies/admin/{lobbyId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public long getAdmin(@PathVariable Long lobbyId) {

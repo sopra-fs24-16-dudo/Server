@@ -80,7 +80,7 @@ public class UserService {
       statusUser.setStatus(UserStatus.OFFLINE);
       return statusUser;
     } else {
-      return null; // User not found
+      return null;
     }
   }
 
@@ -92,8 +92,6 @@ public class UserService {
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.ONLINE);
     checkIfUserExists(newUser);
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
     newUser = userRepository.save(newUser);
     userRepository.flush();
 
@@ -119,7 +117,6 @@ public class UserService {
     }
   }
 
-  //Helper methods for the testing.
   public void clearAllUsers() {
       userRepository.deleteAll();
   }

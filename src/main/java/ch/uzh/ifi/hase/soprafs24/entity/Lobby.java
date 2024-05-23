@@ -1,14 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.entity.RoundState.FijoState;
-import ch.uzh.ifi.hase.soprafs24.entity.RoundState.LibreState;
-import ch.uzh.ifi.hase.soprafs24.entity.RoundState.RoundState;
-
 import java.io.Serializable;
 import java.util.*;
-import javax.persistence.*;
-import javax.swing.plaf.nimbus.State;
-
 
 public class Lobby implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -18,7 +12,6 @@ public class Lobby implements Serializable{
     public LinkedHashMap<Long, Player> players;
 
     private boolean isOpen;
-    //private VoiceChannel voiceChannel;
 
     private long adminId;
     private Chat chat = new Chat();
@@ -44,7 +37,6 @@ public class Lobby implements Serializable{
     public void startGame() {
         isOpen = false;
         game = new Game(this);
-        //game.startGame();
     }
 
     public boolean isOpen() {
@@ -61,7 +53,6 @@ public class Lobby implements Serializable{
     public void deletePlayer(Long playerId) {
         players.remove(playerId);
     }
-
 
     public Chat getChat() {
         return chat;
@@ -116,7 +107,6 @@ public class Lobby implements Serializable{
     public Player getCurrentPlayer(){
         return game.getCurrentPlayer();
     }
-
 
     public Bid getNextBid(){
         return game.getNextBid();
@@ -174,7 +164,6 @@ public class Lobby implements Serializable{
         return game.getRound().getState() instanceof FijoState;
     }
 
-    // New methods for testing
     public void postMessage(String message) {
         chat.addMessage(message);
     }

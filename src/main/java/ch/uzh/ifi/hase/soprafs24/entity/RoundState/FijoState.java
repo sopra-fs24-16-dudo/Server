@@ -4,7 +4,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.Bid;
 import ch.uzh.ifi.hase.soprafs24.entity.Dice;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.Suit;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

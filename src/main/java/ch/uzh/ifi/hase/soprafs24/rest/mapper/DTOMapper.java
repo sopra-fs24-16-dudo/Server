@@ -45,17 +45,5 @@ public interface DTOMapper {
   //@Mapping(source = "users", target = "users")
   LobbyGetDTO convertEntityToLobbyGetDTO(Lobby lobby);
 
-  default PlayerGetDTO[] mapPlayers(LinkedHashMap<Long, Player> players) {
-      if (players == null) {
-          return null;
-      }
-
-      return players.values().stream()
-              .map(this::convertEntityToPlayerGetDTO)
-              .toArray(PlayerGetDTO[]::new);
-  }
-
-
-
     PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 }

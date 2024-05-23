@@ -1,8 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity.RoundState;
+
 import ch.uzh.ifi.hase.soprafs24.entity.Bid;
 import ch.uzh.ifi.hase.soprafs24.entity.Player;
 import ch.uzh.ifi.hase.soprafs24.entity.Suit;
-
 import java.util.List;
 import java.util.Map;
 

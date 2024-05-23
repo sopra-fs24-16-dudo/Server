@@ -82,7 +82,6 @@ public class Player {
         this.id = id;
     }
 
-
     public boolean isReady() {
         return ready;
     }

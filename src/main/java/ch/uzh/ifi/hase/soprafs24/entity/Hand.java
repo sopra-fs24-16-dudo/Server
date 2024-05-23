@@ -1,8 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import java.util.Map;
-import java.util.HashMap;
-
 public class Hand {
 
     private Dice[] dices = new Dice[5];

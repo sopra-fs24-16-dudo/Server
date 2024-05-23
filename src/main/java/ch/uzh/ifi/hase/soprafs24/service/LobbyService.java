@@ -2,20 +2,14 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.managers.LobbyManager;
-//import ch.uzh.ifi.hase.soprafs24.rest.dto.LobbyGetDTO;
-//import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 
@@ -86,7 +80,6 @@ public class LobbyService {
         return updatedLobby;
     }
 
-    //check if lobby with id is full (max. 6 users)
     private void checkIfLobbyFull(Long lobbyId){
         Lobby lobby = lobbyManager.getLobby(lobbyId);
         if (lobby.players.size() >= 6) {
@@ -105,9 +98,7 @@ public class LobbyService {
     }
 
     public boolean playerInLobby(Long lobbyId, Player player) {
-
         Lobby lobby = getLobbyById(lobbyId);
-
         if (!lobby.getPlayers().containsValue(player)) {
             return false;
         }
@@ -133,21 +124,15 @@ public class LobbyService {
     }
 
     private void deleteLobby(Long lobbyId) {
-        // Retrieve the lobby by ID
         Lobby lobby = getLobbyById(lobbyId);
-
-        // Check if the lobby exists
         if (lobby == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId);
         }
-
-        // Delete the lobby
         lobbyManager.removeLobby(lobbyId);
 
         log.debug("Deleted lobby: {}", lobbyId);
     }
     public void updatePlayerReadyStatus(Player player) {
-        // Update user's readiness status
         if (player.isReady()) {
             player.setReady(false);
         } else {
@@ -155,31 +140,14 @@ public class LobbyService {
         }
     }
     public boolean allPlayersReady(Long lobbyId) {
-
         Lobby lobby = lobbyManager.getLobby(lobbyId);
-        // Get all users in the lobby
         List<Player> playersInLobby = lobby.getPlayersList();
-
         for (Player player : playersInLobby) {
             if (!player.isReady()) {
                 return false;
             }
         }return true;
     }
-    //public void resetAllUsersReadyStatus(Long lobbyId) {
-    //    // Retrieve the lobby by ID
-    //    Lobby lobby = lobbyRepository.findById(lobbyId)
-    //            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lobby not found with id: " + lobbyId));
-
-        // Reset readiness status of all users in the lobby to false
-    //    List<User> users = lobby.getUsers();
-    //    for (User user : users) {
-    //        user.setReady(false);
-    //    }
-
-        // Save the updated lobby
-    //    lobbyRepository.save(lobby);
-    //}
 
     public void postMessage(long lobbyId, String message) {
         Lobby lobby = lobbyManager.getLobby(lobbyId);
@@ -209,22 +177,11 @@ public class LobbyService {
         Lobby lobby = lobbyManager.getLobby(lobbyId);
         return lobby.getRound();
     }
-    /*public void updateLobby(Lobby updatedLobby) {
-        Long lobbyId = updatedLobby.getId();
-        if (!lobbyManager.getLobbies().contains(updatedLobby)) {
-            throw new IllegalArgumentException("Lobby with id " + lobbyId + " does not exist.");
-        }
-
-        lobbyManager.updateLobby(updatedLobby, lobbyId);
-    }
-
-     */
 
     public Leaderboard getLeaderboard(Lobby lobby) {
         return lobby.getLeaderboard();
     }
 
-    // Methods for testing
     public void clearAllLobbies() {
         lobbyManager.clearAllLobbies();
     }

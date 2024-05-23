@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 
 @Entity
 @Table(name = "USER")
@@ -29,8 +28,6 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private int gamesPlayed;
-    // getters and setters...
-
 
   public Long getId() {
     return id;

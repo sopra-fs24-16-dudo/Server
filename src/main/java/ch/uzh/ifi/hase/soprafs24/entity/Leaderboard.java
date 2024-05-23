@@ -12,7 +12,6 @@ public class Leaderboard {
         this.userPoints = new HashMap<>();
     }
 
-
     public void addUser(Player player) {
         boolean playerExists = this.userPoints.keySet().stream()
                 .anyMatch(existingPlayer -> existingPlayer.getId() == player.getId());

@@ -19,7 +19,6 @@ public class GameService {
         this.lobbyService = lobbyService;
     }
 
-
     public Player createPlayer (User user){
         return new Player(user);
     }

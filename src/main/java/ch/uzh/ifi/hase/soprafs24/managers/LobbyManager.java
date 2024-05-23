@@ -1,15 +1,13 @@
 package ch.uzh.ifi.hase.soprafs24.managers;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Lobby;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LobbyManager {
 
-    private HashMap<Long, Lobby> lobbies = new HashMap<>();
+    private HashMap<Long, Lobby> lobbies;
 
     public LobbyManager() {
         this.lobbies = new HashMap<>();
@@ -45,7 +43,6 @@ public class LobbyManager {
         return maxId + 1;
     }
 
-    // New methods for clearing all lobbies and resetting ID counter
     public void clearAllLobbies() {
         lobbies.clear();
     }
